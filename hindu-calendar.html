@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Amazing Hindu Calendar</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        @keyframes orbit {
+            from { transform: rotate(0deg) translateX(100px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+        }
+        .float { animation: float 3s ease-in-out infinite; }
+        .bounce { animation: bounce 1s ease-in-out infinite; }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .slide-in { animation: slideIn 0.6s ease-out forwards; }
+        .pulse-ring { animation: pulse-ring 1.5s ease-out infinite; }
+
+        body {
+            overflow-x: hidden;
+        }
+
+        .moon-phase {
+            border-radius: 50%;
+            background: linear-gradient(90deg, #f0f0f0 50%, #1a1a1a 50%);
+        }
+
+        .gradient-text {
+            color: #1a202c;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Sankranti Animation
+        function SankrantiAnimation() {
+            const [currentSign, setCurrentSign] = useState(0);
+            const [isPlaying, setIsPlaying] = useState(true);
+
+            const zodiacSigns = [
+                { name: 'Aries', symbol: '♈', color: 'text-gray-700' },
+                { name: 'Taurus', symbol: '♉', color: 'text-gray-700' },
+                { name: 'Gemini', symbol: '♊', color: 'text-gray-700' },
+                { name: 'Cancer', symbol: '♋', color: 'text-gray-700' },
+                { name: 'Leo', symbol: '♌', color: 'text-gray-700' },
+                { name: 'Virgo', symbol: '♍', color: 'text-gray-700' },
+                { name: 'Libra', symbol: '♎', color: 'text-gray-700' },
+                { name: 'Scorpio', symbol: '♏', color: 'text-gray-700' },
+                { name: 'Sagittarius', symbol: '♐', color: 'text-gray-700' },
+                { name: 'Capricorn', symbol: '♑', color: 'text-gray-700' },
+                { name: 'Aquarius', symbol: '♒', color: 'text-gray-700' },
+                { name: 'Pisces', symbol: '♓', color: 'text-gray-700' }
+            ];
+
+            useEffect(() => {
+                if (!isPlaying) return;
+                const timer = setInterval(() => {
+                    setCurrentSign((prev) => (prev + 1) % 12);
+                }, 2000);
+                return () => clearInterval(timer);
+            }, [isPlaying]);
+
+            const angle = (currentSign * 30) - 90; // Convert to degrees, start from top
+
+            return (
+                <div className="text-center">
+                    <div className="relative w-full max-w-md mx-auto aspect-square mb-4">
+                        {/* Zodiac circle */}
+                        <div className="absolute inset-0 border-4 border-gray-300 rounded-full"></div>
+
+                        {/* Zodiac signs around the circle */}
+                        {zodiacSigns.map((sign, idx) => {
+                            const signAngle = (idx * 30) - 90;
+                            const radian = (signAngle * Math.PI) / 180;
+                            const radius = 45; // percentage
+                            const x = 50 + radius * Math.cos(radian);
+                            const y = 50 + radius * Math.sin(radian);
+
+                            return (
+                                <div
+                                    key={idx}
+                                    className={`absolute transition-all duration-500 ${
+                                        idx === currentSign ? 'text-4xl scale-125 text-gray-900' : 'text-2xl text-gray-400'
+                                    }`}
+                                    style={{
+                                        left: `${x}%`,
+                                        top: `${y}%`,
+                                        transform: 'translate(-50%, -50%)'
+                                    }}
+                                >
+                                    {sign.symbol}
+                                </div>
+                            );
+                        })}
+
+                        {/* Sun in the center */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-6xl">☀️</div>
+                        </div>
+
+                        {/* Arrow pointing to current sign */}
+                        <div
+                            className="absolute top-1/2 left-1/2 origin-left transition-transform duration-1000"
+                            style={{
+                                transform: `translate(-50%, -50%) rotate(${angle}deg)`,
+                                width: '40%',
+                                height: '4px'
+                            }}
+                        >
+                            <div className="absolute right-0 top-1/2 -translate-y-1/2">
+                                <div className="w-0 h-0 border-l-8 border-l-gray-900 border-t-4 border-t-transparent border-b-4 border-b-transparent"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-3">
+                        <div className="text-sm text-gray-600 mb-2">Sun is currently in:</div>
+                        <div className="text-4xl mb-2">{zodiacSigns[currentSign].symbol}</div>
+                        <div className="text-lg text-gray-900">{zodiacSigns[currentSign].name}</div>
+                    </div>
+
+                    <div className="bg-gray-900 text-white p-4 rounded-xl mb-3">
+                        <div className="text-sm mb-2">🎯 When the Sun enters the next sign...</div>
+                        <div className="text-lg">That moment is called <strong>SANKRANTI</strong>!</div>
+                        <div className="text-xs mt-2 opacity-75">Happens 12 times per year (~every 30 days)</div>
+                    </div>
+
+                    <button
+                        onClick={() => setIsPlaying(!isPlaying)}
+                        className="px-6 py-2 bg-gray-200 text-gray-700 rounded-full text-sm hover:bg-gray-300 transition-colors"
+                    >
+                        {isPlaying ? '⏸ Pause' : '▶ Play'}
+                    </button>
+                </div>
+            );
+        }
+
+        // Tithi Animation
+        function TithiAnimation() {
+            const [currentTithi, setCurrentTithi] = useState(0);
+            const [isPlaying, setIsPlaying] = useState(true);
+
+            const tithiNames = [
+                'Pratipada', 'Dwitiya', 'Tritiya', 'Chaturthi', 'Panchami',
+                'Shashthi', 'Saptami', 'Ashtami', 'Navami', 'Dashami',
+                'Ekadashi', 'Dwadashi', 'Trayodashi', 'Chaturdashi', 'Purnima/Amavasya'
+            ];
+
+            const moonPhases = ['🌑', '🌒', '🌒', '🌓', '🌓', '🌔', '🌔', '🌕', '🌕', '🌖', '🌖', '🌗', '🌗', '🌘', '🌘'];
+
+            useEffect(() => {
+                if (!isPlaying) return;
+                const timer = setInterval(() => {
+                    setCurrentTithi((prev) => (prev + 1) % 30);
+                }, 800);
+                return () => clearInterval(timer);
+            }, [isPlaying]);
+
+            // Calculate angle between Sun and Moon (each tithi = 12 degrees)
+            const moonAngle = (currentTithi * 12) - 90;
+            const paksha = currentTithi < 15 ? 'Shukla Paksha (Waxing)' : 'Krishna Paksha (Waning)';
+            const tithiInPaksha = currentTithi % 15;
+            const tithiName = tithiInPaksha === 14 ?
+                (currentTithi < 15 ? 'Purnima (Full Moon)' : 'Amavasya (New Moon)') :
+                tithiNames[tithiInPaksha];
+
+            return (
+                <div className="text-center">
+                    <div className="relative w-full max-w-md mx-auto aspect-square mb-4">
+                        {/* Orbit circle */}
+                        <div className="absolute inset-0 border-4 border-gray-300 rounded-full"></div>
+
+                        {/* Degree markers every 12 degrees (30 tithis) */}
+                        {Array.from({ length: 30 }).map((_, idx) => {
+                            const angle = (idx * 12) - 90;
+                            const radian = (angle * Math.PI) / 180;
+                            const radius = 48;
+                            const x = 50 + radius * Math.cos(radian);
+                            const y = 50 + radius * Math.sin(radian);
+
+                            return (
+                                <div
+                                    key={idx}
+                                    className={`absolute w-2 h-2 rounded-full transition-all duration-300 ${
+                                        idx === currentTithi ? 'bg-gray-900 scale-150' : 'bg-gray-300'
+                                    }`}
+                                    style={{
+                                        left: `${x}%`,
+                                        top: `${y}%`,
+                                        transform: 'translate(-50%, -50%)'
+                                    }}
+                                />
+                            );
+                        })}
+
+                        {/* Sun at center */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-5xl">☀️</div>
+                        </div>
+
+                        {/* Moon orbiting */}
+                        <div
+                            className="absolute top-1/2 left-1/2 transition-transform duration-700"
+                            style={{
+                                transform: `translate(-50%, -50%) rotate(${moonAngle}deg) translateX(110px)`,
+                            }}
+                        >
+                            <div
+                                className="text-4xl"
+                                style={{ transform: `rotate(${-moonAngle}deg)` }}
+                            >
+                                {moonPhases[Math.floor(currentTithi / 2)]}
+                            </div>
+                        </div>
+
+                        {/* Angle arc indicator */}
+                        <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                            <path
+                                d={`M 50% 50% L 50% 10% A 40% 40% 0 ${currentTithi > 15 ? 1 : 0} 1 ${
+                                    50 + 40 * Math.cos((moonAngle * Math.PI) / 180)
+                                }% ${
+                                    50 + 40 * Math.sin((moonAngle * Math.PI) / 180)
+                                }% Z`}
+                                fill="rgba(0, 0, 0, 0.05)"
+                                stroke="rgba(0, 0, 0, 0.2)"
+                                strokeWidth="1"
+                            />
+                        </svg>
+                    </div>
+
+                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-3">
+                        <div className="text-sm text-gray-600 mb-2">Current Tithi:</div>
+                        <div className="text-4xl mb-2">{moonPhases[Math.floor(currentTithi / 2)]}</div>
+                        <div className="text-lg font-semibold text-gray-900">{tithiName}</div>
+                        <div className="text-sm text-gray-600 mt-1">Tithi {currentTithi + 1} of 30</div>
+                        <div className="text-xs text-gray-500 mt-1">{paksha}</div>
+                    </div>
+
+                    <div className="bg-gray-900 text-white p-4 rounded-xl mb-3">
+                        <div className="text-sm mb-2">🎯 Moon-Sun angle: {currentTithi * 12}°</div>
+                        <div className="text-lg">Each <strong>12° = 1 Tithi</strong></div>
+                        <div className="text-xs mt-2 opacity-75">30 Tithis complete one lunar month (360°)</div>
+                    </div>
+
+                    <button
+                        onClick={() => setIsPlaying(!isPlaying)}
+                        className="px-6 py-2 bg-gray-200 text-gray-700 rounded-full text-sm hover:bg-gray-300 transition-colors"
+                    >
+                        {isPlaying ? '⏸ Pause' : '▶ Play'}
+                    </button>
+                </div>
+            );
+        }
+
+        // Moon Phase Visualization
+        function MoonPhase({ phase }) {
+            // phase 0 = new moon, 0.5 = full moon, 1 = new moon again
+            const moonPhases = [
+                { name: 'New Moon', emoji: '🌑', phase: 0 },
+                { name: 'Waxing Crescent', emoji: '🌒', phase: 0.125 },
+                { name: 'First Quarter', emoji: '🌓', phase: 0.25 },
+                { name: 'Waxing Gibbous', emoji: '🌔', phase: 0.375 },
+                { name: 'Full Moon', emoji: '🌕', phase: 0.5 },
+                { name: 'Waning Gibbous', emoji: '🌖', phase: 0.625 },
+                { name: 'Last Quarter', emoji: '🌗', phase: 0.75 },
+                { name: 'Waning Crescent', emoji: '🌘', phase: 0.875 }
+            ];
+
+            const currentPhase = moonPhases[Math.floor(phase * 8) % 8];
+
+            return (
+                <div className="text-center">
+                    <div className="text-8xl mb-4 float">{currentPhase.emoji}</div>
+                    <div className="text-xl font-medium text-gray-700">{currentPhase.name}</div>
+                </div>
+            );
+        }
+
+        // Festival Cards
+        function FestivalComparison({ months }) {
+            const festivals = [
+                { name: 'Diwali', hinduMonth: 'Kartik', gregorianExample: 'Oct/Nov (changes yearly)', color: 'from-orange-400 to-yellow-500', emoji: '🪔' },
+                { name: 'Holi', hinduMonth: 'Phalguna', gregorianExample: 'Feb/Mar (changes yearly)', color: 'from-pink-400 to-purple-500', emoji: '🎨' },
+                { name: 'Navratri', hinduMonth: 'Ashwin', gregorianExample: 'Sep/Oct (changes yearly)', color: 'from-red-400 to-pink-500', emoji: '🎭' },
+                { name: 'Raksha Bandhan', hinduMonth: 'Shravana', gregorianExample: 'Jul/Aug (changes yearly)', color: 'from-blue-400 to-cyan-500', emoji: '🧵' }
+            ];
+
+            return (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {festivals.slice(0, Math.min(festivals.length, Math.max(1, Math.floor(months / 3)))).map((festival, idx) => (
+                        <div
+                            key={idx}
+                            className={`bg-gradient-to-br ${festival.color} p-6 rounded-2xl shadow-xl text-white fade-in`}
+                            style={{ animationDelay: `${idx * 0.1}s` }}
+                        >
+                            <div className="text-5xl mb-3">{festival.emoji}</div>
+                            <h3 className="text-2xl font-semibold mb-2">{festival.name}</h3>
+                            <div className="bg-white bg-opacity-20 rounded-lg p-3 text-sm">
+                                <p className="font-medium">Hindu Calendar: {festival.hinduMonth}</p>
+                                <p className="text-xs mt-1 opacity-90">Always same month!</p>
+                            </div>
+                            <div className="mt-2 bg-black bg-opacity-20 rounded-lg p-3 text-sm">
+                                <p className="font-medium">Gregorian: {festival.gregorianExample}</p>
+                                <p className="text-xs mt-1 opacity-90">Date moves every year</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        // Month Cycle Visualization
+        function MonthCycle({ currentMonth, totalMonths, hasAdhikMaas }) {
+            const months = [
+                'Chaitra', 'Vaishakha', 'Jyeshtha', 'Ashadha',
+                'Shravana', 'Bhadrapada', 'Ashwin', 'Kartik',
+                'Margashirsha', 'Pausha', 'Magha', 'Phalguna'
+            ];
+
+            return (
+                <div className="relative w-full max-w-md mx-auto">
+                    <div className="grid grid-cols-3 gap-2">
+                        {months.map((month, idx) => (
+                            <div
+                                key={idx}
+                                className={`p-3 rounded-xl text-center transition-all duration-300 ${
+                                    idx < currentMonth
+                                        ? 'bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-lg scale-105'
+                                        : 'bg-gray-200 text-gray-600'
+                                }`}
+                            >
+                                <div className="font-medium text-sm">{month}</div>
+                                <div className="text-xs mt-1">Month {idx + 1}</div>
+                            </div>
+                        ))}
+                    </div>
+                    {hasAdhikMaas && currentMonth >= 12 && (
+                        <div className="mt-4 bg-gradient-to-r from-orange-500 to-red-500 text-white p-4 rounded-xl shadow-xl text-center bounce">
+                            <div className="text-3xl mb-2">✨</div>
+                            <div className="font-semibold text-lg">Adhik Maas!</div>
+                            <div className="text-sm">Extra Month Added</div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        function HinduCalendarApp() {
+            const [screen, setScreen] = useState(0);
+            const [years, setYears] = useState(1);
+            const [autoPlay, setAutoPlay] = useState(false);
+
+            const lunarMonthDays = 29.53; // Average lunar month
+            const solarYearDays = 365.25;
+            const lunarYearDays = 12 * lunarMonthDays; // ~354 days
+            const driftPerYear = solarYearDays - lunarYearDays; // ~11 days per year
+            const totalDrift = years * driftPerYear;
+
+            // How many extra months needed
+            const monthsNeeded = Math.floor(totalDrift / lunarMonthDays);
+
+            useEffect(() => {
+                if (!autoPlay || years >= 100) return;
+                const timer = setTimeout(() => setYears(y => Math.min(y + 1, 100)), 500);
+                return () => clearTimeout(timer);
+            }, [autoPlay, years]);
+
+            const screens = [
+                { title: "Welcome", icon: "🌙" },
+                { title: "The Challenge", icon: "🤔" },
+                { title: "Sankranti & Tithi", icon: "🌟" },
+                { title: "Adhik Maas", icon: "➕" },
+                { title: "Kshaya Masa", icon: "➖" },
+                { title: "Results", icon: "🎉" }
+            ];
+
+            return (
+                <div className="min-h-screen bg-gray-50 p-4 md:p-8 overflow-x-hidden">
+                    <div className="max-w-4xl mx-auto w-full">
+                        {/* Progress Dots */}
+                        <div className="flex justify-center gap-3 mb-8">
+                            {screens.map((s, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => setScreen(idx)}
+                                    className={`transition-all duration-300 ${
+                                        idx === screen
+                                            ? 'w-12 h-12 rounded-full shadow-lg scale-110'
+                                            : 'w-10 h-10 rounded-full shadow opacity-60 hover:opacity-100'
+                                    } ${idx === screen ? 'bg-gray-800' : 'bg-gray-400'} flex items-center justify-center text-2xl`}
+                                >
+                                    {s.icon}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Screen 0: Welcome */}
+                        {screen === 0 && (
+                            <div className="fade-in">
+                                <div className="bg-white rounded-3xl shadow-lg p-6 md:p-12 text-center border border-gray-200">
+                                    <div className="text-6xl md:text-8xl mb-6 float">🌙</div>
+                                    <h1 className="text-3xl md:text-6xl font-semibold gradient-text mb-6">
+                                        The Amazing Hindu Calendar
+                                    </h1>
+
+                                    <div className="space-y-6 mt-8">
+                                        <div className="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-200">
+                                            <p className="text-xl md:text-2xl font-medium mb-4 text-gray-800">
+                                                Two Calendars Working Together!
+                                            </p>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="bg-white p-4 rounded-xl border border-gray-200">
+                                                    <div className="text-4xl mb-2">🌙</div>
+                                                    <div className="font-semibold text-lg text-gray-800">Lunar Months</div>
+                                                    <div className="text-sm text-gray-600">Follows the Moon</div>
+                                                    <div className="text-2xl font-medium text-gray-700 mt-2">~29.5 days</div>
+                                                </div>
+                                                <div className="bg-white p-4 rounded-xl border border-gray-200">
+                                                    <div className="text-4xl mb-2">☀️</div>
+                                                    <div className="font-semibold text-lg text-gray-800">Solar Year</div>
+                                                    <div className="text-sm text-gray-600">Follows the Sun</div>
+                                                    <div className="text-2xl font-medium text-gray-700 mt-2">~365.25 days</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-200">
+                                            <div className="text-5xl mb-4 bounce">🤔</div>
+                                            <p className="text-xl md:text-2xl font-semibold text-gray-800">
+                                                But there's a problem...
+                                            </p>
+                                            <p className="text-base md:text-lg text-gray-700 mt-3">
+                                                12 lunar months = only <strong className="text-gray-900">354 days</strong>
+                                                <br/>
+                                                1 solar year = <strong className="text-gray-900">365 days</strong>
+                                                <br/>
+                                                <strong className="text-gray-900 text-xl">Missing 11 days!</strong>
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            onClick={() => setScreen(1)}
+                                            className="px-8 md:px-12 py-4 md:py-5 rounded-full text-xl md:text-2xl font-semibold bg-gray-900 text-white shadow-lg hover:bg-gray-800 hover:scale-105 transition-all transform"
+                                        >
+                                            See The Problem! →
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Screen 1: The Problem */}
+                        {screen === 1 && (
+                            <div className="fade-in space-y-6">
+                                <div className="bg-white rounded-3xl shadow-lg p-4 md:p-8 border border-gray-200">
+                                    <h2 className="text-2xl md:text-4xl font-semibold text-gray-900 mb-6 text-center">
+                                        ⚠️ What if we only used 12 lunar months?
+                                    </h2>
+
+                                    {/* Moon Cycle */}
+                                    <div className="mb-6">
+                                        <p className="text-center font-medium text-gray-700 mb-4 text-sm md:text-base">
+                                            Watch the months pass:
+                                        </p>
+                                        <MoonPhase phase={(years * 12 % 8) / 8} />
+                                    </div>
+
+                                    {/* Year Counter */}
+                                    <div className="bg-gray-50 p-4 md:p-6 rounded-2xl mb-6 border border-gray-200">
+                                        <div className="text-center mb-4">
+                                            <div className="inline-block bg-gray-900 text-white rounded-2xl px-6 md:px-8 py-3 md:py-4 shadow-lg">
+                                                <div className="text-4xl md:text-6xl font-semibold bounce">{years}</div>
+                                                <div className="text-base md:text-xl">year{years !== 1 ? 's' : ''} passed</div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-2 md:gap-4 mb-4">
+                                            <button
+                                                onClick={() => setYears(Math.max(1, years - 1))}
+                                                className="px-4 md:px-6 py-2 md:py-3 bg-gray-700 text-white rounded-full font-medium text-lg md:text-xl hover:bg-gray-600"
+                                            >
+                                                −1
+                                            </button>
+                                            <input
+                                                type="range"
+                                                min="1"
+                                                max="100"
+                                                value={years}
+                                                onChange={(e) => { setYears(Number(e.target.value)); setAutoPlay(false); }}
+                                                className="flex-1 h-4"
+                                            />
+                                            <button
+                                                onClick={() => setYears(Math.min(100, years + 1))}
+                                                className="px-4 md:px-6 py-2 md:py-3 bg-gray-700 text-white rounded-full font-medium text-lg md:text-xl hover:bg-gray-600"
+                                            >
+                                                +1
+                                            </button>
+                                        </div>
+
+                                        <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mb-4">
+                                            <button onClick={() => setYears(3)} className="py-2 bg-gray-600 text-white rounded-lg font-medium text-xs md:text-sm hover:bg-gray-500">
+                                                3 years
+                                            </button>
+                                            <button onClick={() => setYears(10)} className="py-2 bg-gray-600 text-white rounded-lg font-medium text-xs md:text-sm hover:bg-gray-500">
+                                                10 years
+                                            </button>
+                                            <button onClick={() => setYears(19)} className="py-2 bg-gray-700 text-white rounded-lg font-medium text-xs md:text-sm hover:bg-gray-600">
+                                                19 years
+                                            </button>
+                                            <button onClick={() => setYears(50)} className="py-2 bg-gray-700 text-white rounded-lg font-medium text-xs md:text-sm hover:bg-gray-600">
+                                                50 years
+                                            </button>
+                                            <button onClick={() => setYears(100)} className="py-2 bg-gray-800 text-white rounded-lg font-medium text-xs md:text-sm hover:bg-gray-700">
+                                                100 years
+                                            </button>
+                                        </div>
+
+                                        <button
+                                            onClick={() => { setAutoPlay(!autoPlay); if (years >= 100) setYears(1); }}
+                                            className={`w-full py-3 md:py-4 rounded-xl font-medium text-base md:text-xl ${
+                                                autoPlay ? 'bg-gray-700 text-white' : 'bg-gray-900 text-white'
+                                            } shadow-lg hover:bg-gray-800 transition-all`}
+                                        >
+                                            {autoPlay ? '⏸ Pause' : '▶ Watch Years Pass!'}
+                                        </button>
+                                    </div>
+
+                                    {/* Drift Display */}
+                                    <div className="bg-gray-50 p-4 md:p-6 rounded-2xl mb-6 border border-gray-300">
+                                        <p className="text-center font-medium text-lg md:text-xl mb-4 text-gray-900">
+                                            Calendar Drift:
+                                        </p>
+                                        <div className="text-center mb-4">
+                                            <span className={`font-semibold bounce ${
+                                                totalDrift >= 365 ? 'text-5xl md:text-7xl text-gray-900' :
+                                                totalDrift >= 100 ? 'text-4xl md:text-6xl text-gray-800' :
+                                                'text-3xl md:text-5xl text-gray-800'
+                                            }`}>
+                                                {totalDrift.toFixed(1)}
+                                            </span>
+                                            <span className="text-lg md:text-2xl font-medium text-gray-700"> days behind!</span>
+                                            {totalDrift >= 365 && (
+                                                <div className="mt-2 text-base md:text-xl font-medium text-gray-900">
+                                                    = {Math.floor(totalDrift / 365)} YEAR{Math.floor(totalDrift / 365) !== 1 ? 'S' : ''} OFF! 🌪️
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="bg-white rounded-xl p-4 border border-gray-200">
+                                            <p className="text-sm font-medium text-gray-700 mb-2 text-center">
+                                                Extra Months Needed:
+                                            </p>
+                                            <div className="text-4xl md:text-5xl font-semibold text-center text-gray-900">
+                                                {monthsNeeded}
+                                            </div>
+                                            <p className="text-xs text-center text-gray-600 mt-2">
+                                                lunar months to catch up to the Sun
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Festival Impact */}
+                                    {totalDrift >= 30 && (
+                                        <div className="bg-gray-50 p-4 md:p-6 rounded-2xl mb-6 border border-gray-200">
+                                            <h3 className="text-xl md:text-2xl font-semibold text-gray-900 text-center mb-4">
+                                                🎭 Impact on Festivals
+                                            </h3>
+                                            <p className="text-center text-base md:text-lg text-gray-700 mb-4">
+                                                Without adjustment, festivals would drift through all seasons!
+                                            </p>
+                                            <div className="bg-white rounded-xl p-4 border border-gray-200">
+                                                <p className="font-medium text-gray-900 text-center">
+                                                    Diwali could happen in summer! ☀️🪔
+                                                    <br/>
+                                                    Holi could happen in winter! ❄️🎨
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                                        <button
+                                            onClick={() => setScreen(0)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 text-gray-700 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300"
+                                        >
+                                            ← Back
+                                        </button>
+                                        <button
+                                            onClick={() => setScreen(2)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 hover:scale-105 transition-all"
+                                        >
+                                            Understanding The System →
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Screen 2: Sankranti & Tithi */}
+                        {screen === 2 && (
+                            <div className="fade-in">
+                                <div className="bg-white rounded-3xl shadow-lg p-4 md:p-8 border border-gray-200">
+                                    <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-6 text-center">
+                                        🌟 Understanding Sankranti & Tithi
+                                    </h2>
+
+                                    {/* Sankranti Explanation */}
+                                    <div className="bg-gray-50 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                            What is a Sankranti?
+                                        </h3>
+                                        <SankrantiAnimation />
+                                    </div>
+
+                                    {/* Tithi Explanation */}
+                                    <div className="bg-gray-50 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                            What is a Tithi?
+                                        </h3>
+
+                                        <TithiAnimation />
+
+                                        <div className="space-y-4 mt-6">
+                                            <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200">
+                                                <div className="text-center mb-4">
+                                                    <div className="text-5xl mb-3">🌙</div>
+                                                    <p className="text-lg md:text-xl font-semibold text-gray-900">
+                                                        Tithi = Lunar Day
+                                                    </p>
+                                                </div>
+                                                <p className="text-sm md:text-base text-gray-600 text-center">
+                                                    A tithi is measured by the angular distance between the Sun and Moon.
+                                                    Every <span className="text-gray-900 font-medium">12° separation = 1 Tithi</span>.
+                                                    There are <span className="text-gray-900 font-medium">30 tithis in each lunar month</span> (360° ÷ 12° = 30).
+                                                </p>
+                                            </div>
+
+                                            <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200">
+                                                <h4 className="text-lg font-semibold text-gray-900 mb-3 text-center">
+                                                    🔄 Sankranti vs Tithi
+                                                </h4>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                                        <div className="text-3xl mb-2 text-center">☀️</div>
+                                                        <p className="font-semibold text-gray-800 mb-2 text-center">Sankranti (Solar)</p>
+                                                        <div className="text-sm text-gray-600 space-y-1">
+                                                            <p>• Based on <span className="text-gray-900">Sun's position</span></p>
+                                                            <p>• 12 per year</p>
+                                                            <p>• ~30.4 days apart</p>
+                                                            <p>• Defines month <span className="text-gray-900">names</span></p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                                        <div className="text-3xl mb-2 text-center">🌙</div>
+                                                        <p className="font-semibold text-gray-800 mb-2 text-center">Tithi (Lunar)</p>
+                                                        <div className="text-sm text-gray-600 space-y-1">
+                                                            <p>• Based on <span className="text-gray-900">Moon's position</span></p>
+                                                            <p>• 30 per month</p>
+                                                            <p>• ~0.98 days each</p>
+                                                            <p>• Defines <span className="text-gray-900">festival dates</span></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="bg-gray-900 text-white rounded-xl p-4 md:p-6">
+                                                <p className="text-center text-sm md:text-base">
+                                                    <span className="font-semibold">🔑 Key Point:</span> Sankranti determines which <span className="font-medium">month</span> it is,
+                                                    while Tithi determines which <span className="font-medium">day</span> within that month and when <span className="font-medium">festivals</span> occur!
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                                        <button
+                                            onClick={() => setScreen(1)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 text-gray-700 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300"
+                                        >
+                                            ← Back
+                                        </button>
+                                        <button
+                                            onClick={() => setScreen(3)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 hover:scale-105 transition-all"
+                                        >
+                                            Next: Adhik Maas →
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Screen 3: Adhik Maas */}
+                        {screen === 3 && (
+                            <div className="fade-in">
+                                <div className="bg-white rounded-3xl shadow-lg p-4 md:p-8 border border-gray-200">
+                                    <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-6 text-center">
+                                        ➕ Adhik Maas (Extra Month)
+                                    </h2>
+
+                                    <div className="bg-gray-50 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200">
+                                        <div className="text-center mb-6">
+                                            <div className="text-6xl md:text-8xl mb-4 float">📅</div>
+                                            <p className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2">
+                                                Adhik Maas (Extra Month)
+                                            </p>
+                                            <p className="text-3xl md:text-5xl font-semibold text-gray-800 mb-4 bounce">
+                                                Add an Extra Month Every ~3 Years
+                                            </p>
+                                            <p className="text-base md:text-lg text-gray-700">
+                                                Also called <span className="text-gray-900">Purushottam Maas</span>
+                                            </p>
+                                        </div>
+
+                                        <div className="bg-white rounded-xl p-6 shadow-sm mb-4 border border-gray-200">
+                                            <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">
+                                                ⏰ Why Do We Need It?
+                                            </h3>
+                                            <div className="space-y-3">
+                                                <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-400">
+                                                    <p className="font-medium text-gray-800 mb-2">Year 1:</p>
+                                                    <p className="text-sm text-gray-600">12 lunar months = 354 days</p>
+                                                    <p className="text-sm text-gray-900 font-medium">Missing 11 days from solar year (365 days)</p>
+                                                </div>
+                                                <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-400">
+                                                    <p className="font-medium text-gray-800 mb-2">Year 2:</p>
+                                                    <p className="text-sm text-gray-600">Another 11 days behind</p>
+                                                    <p className="text-sm text-gray-900 font-medium">Total: 22 days behind</p>
+                                                </div>
+                                                <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-400">
+                                                    <p className="font-medium text-gray-800 mb-2">Year 3:</p>
+                                                    <p className="text-sm text-gray-600">Another 11 days behind</p>
+                                                    <p className="text-sm text-gray-900 font-medium">Total: ~33 days behind ≈ 1 lunar month!</p>
+                                                </div>
+                                                <div className="bg-gray-100 p-4 rounded-lg border-2 border-gray-900">
+                                                    <p className="font-medium text-gray-900 mb-2 text-center text-lg">✨ Solution: Add Adhik Maas!</p>
+                                                    <p className="text-sm text-gray-700 text-center">Insert an extra 13th month to catch up with the Sun</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                                            <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">
+                                                📍 How Do We Know When to Add It?
+                                            </h3>
+                                            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                                <p className="font-medium text-gray-800 mb-2">🔑 The Rule: Sankranti</p>
+                                                <p className="text-sm text-gray-600 mb-3">
+                                                    <strong>Sankranti</strong> = when the Sun enters a new zodiac sign (happens 12 times per year)
+                                                </p>
+                                                <div className="bg-white p-3 rounded-lg border border-gray-200">
+                                                    <p className="text-sm font-medium text-gray-900 mb-2">Normal Month:</p>
+                                                    <p className="text-xs text-gray-600">Each lunar month contains exactly ONE Sankranti ✓</p>
+                                                </div>
+                                                <div className="bg-gray-100 p-3 rounded-lg mt-2 border border-gray-300">
+                                                    <p className="text-sm font-medium text-gray-900 mb-2">Adhik Maas:</p>
+                                                    <p className="text-xs text-gray-600">When a lunar month has ZERO Sankranti → Extra month! 🎯</p>
+                                                    <p className="text-xs text-gray-500 italic mt-1">This month is "extra" and doesn't count in the regular calendar</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* How it works */}
+                                    <div className="bg-gray-50 p-4 md:p-6 rounded-2xl mb-6 border border-gray-200">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                            🔄 How Often Does It Happen?
+                                        </h3>
+                                        <div className="space-y-3">
+                                            <div className="bg-white rounded-lg p-4 border-l-4 border-gray-400">
+                                                <p className="font-medium text-gray-800">🌙 Regular: 12 lunar months/year</p>
+                                                <p className="text-sm text-gray-600">~354 days (11 days short)</p>
+                                            </div>
+                                            <div className="bg-white rounded-lg p-4 border-l-4 border-gray-500">
+                                                <p className="font-medium text-gray-800">✨ With Adhik Maas: ~13 lunar months</p>
+                                                <p className="text-sm text-gray-600">~384 days (19 days over)</p>
+                                            </div>
+                                            <div className="bg-white rounded-lg p-4 border-l-4 border-gray-600">
+                                                <p className="font-medium text-gray-800">🎯 Mathematical Pattern:</p>
+                                                <p className="text-sm text-gray-600">Roughly 7 Adhik Maas occur every 19 years</p>
+                                                <p className="text-xs text-gray-500 mt-1">235 lunar months ≈ 19 solar years</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-4 bg-white rounded-xl p-4 border border-gray-200">
+                                            <p className="text-sm text-gray-600 mb-2">
+                                                <span className="font-semibold text-gray-900">🌟 Hindu vs Hebrew Calendar:</span>
+                                            </p>
+                                            <div className="space-y-2 text-xs text-gray-600">
+                                                <p>• <span className="font-medium text-gray-800">Hebrew Calendar:</span> Uses a fixed 19-year cycle. Leap months are added in years 3, 6, 8, 11, 14, 17, and 19 of each cycle - always the same pattern.</p>
+                                                <p>• <span className="font-medium text-gray-800">Hindu Calendar:</span> Doesn't follow a fixed cycle! Each Adhik Maas is determined by astronomical observation - when a lunar month has no Sankranti. The timing varies based on actual Sun and Moon positions.</p>
+                                                <p className="text-gray-500 italic mt-2">Both systems average ~7 extra months per 19 years, but achieve it differently: Hebrew uses a repeating pattern, Hindu uses astronomical rules.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                                        <button
+                                            onClick={() => setScreen(2)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 text-gray-700 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300"
+                                        >
+                                            ← Back
+                                        </button>
+                                        <button
+                                            onClick={() => setScreen(4)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 hover:scale-105 transition-all"
+                                        >
+                                            Next: Kshaya Masa →
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Screen 4: Kshaya Masa */}
+                        {screen === 4 && (
+                            <div className="fade-in">
+                                <div className="bg-white rounded-3xl shadow-lg p-4 md:p-8 border border-gray-200">
+                                    <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-6 text-center">
+                                        ➖ Kshaya Masa (Lost Month)
+                                    </h2>
+
+                                    {/* Kshaya Masa Explanation */}
+                                    <div className="bg-gray-50 p-4 md:p-6 rounded-2xl mb-6 border border-gray-200">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                            🌑 Kshaya Masa (Lost Month) - The Rare Opposite!
+                                        </h3>
+
+                                        <div className="bg-white rounded-xl p-4 md:p-6 mb-4 border border-gray-200">
+                                            <div className="text-center mb-4">
+                                                <div className="text-5xl mb-3">🔮</div>
+                                                <p className="text-lg md:text-xl font-semibold text-gray-900">
+                                                    Sometimes a month is SKIPPED!
+                                                </p>
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-gray-500">
+                                                    <p className="font-medium text-gray-800 mb-2">📍 What is it?</p>
+                                                    <p className="text-sm text-gray-600">
+                                                        A lunar month that gets completely omitted because it contains
+                                                        <strong> TWO Sankrantis</strong> instead of one
+                                                    </p>
+                                                </div>
+
+                                                <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-gray-500">
+                                                    <p className="font-medium text-gray-800 mb-2">🔄 Why does it happen?</p>
+                                                    <p className="text-sm text-gray-600 mb-2">
+                                                        Remember: Adhik Maas happens when we're behind and need to catch up.
+                                                        But adding extra months isn't perfectly precise!
+                                                    </p>
+                                                    <div className="bg-white p-3 rounded-lg mt-2 border border-gray-200">
+                                                        <p className="text-xs font-medium text-gray-700 mb-1">The Problem:</p>
+                                                        <p className="text-xs text-gray-600">
+                                                            • Normal lunar month: ~29.53 days<br/>
+                                                            • Time between Sankrantis: ~30.4 days<br/>
+                                                            • <strong className="text-gray-900">Lunar months are shorter!</strong>
+                                                        </p>
+                                                    </div>
+                                                    <p className="text-sm text-gray-600 mt-2">
+                                                        Over many years, lunar months can "drift forward" so much that
+                                                        <strong className="text-gray-900"> TWO Sankrantis fit in one lunar month!</strong>
+                                                    </p>
+                                                </div>
+
+                                                <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-gray-500">
+                                                    <p className="font-medium text-gray-800 mb-2">🎯 The Solution:</p>
+                                                    <p className="text-sm text-gray-600 mb-2">
+                                                        When a lunar month has TWO Sankrantis:
+                                                    </p>
+                                                    <div className="bg-white p-3 rounded-lg border border-gray-200">
+                                                        <p className="text-xs font-medium text-gray-700 mb-1">Step 1:</p>
+                                                        <p className="text-xs text-gray-600">This lunar month is "used up" by the first Sankranti</p>
+                                                    </div>
+                                                    <div className="bg-white p-3 rounded-lg mt-2 border border-gray-200">
+                                                        <p className="text-xs font-medium text-gray-700 mb-1">Step 2:</p>
+                                                        <p className="text-xs text-gray-600">The second Sankranti "skips ahead" to name the NEXT lunar month</p>
+                                                    </div>
+                                                    <div className="bg-gray-100 p-3 rounded-lg mt-2 border-2 border-gray-400">
+                                                        <p className="text-xs font-medium text-gray-900 mb-1">Result:</p>
+                                                        <p className="text-xs text-gray-600">One month name is lost/skipped = <strong>Kshaya Masa</strong></p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-gray-500">
+                                                    <p className="font-medium text-gray-800 mb-2">⏰ How rare?</p>
+                                                    <p className="text-sm text-gray-600">
+                                                        EXTREMELY RARE! Happens only once every <strong>140-190 years</strong>
+                                                        because the drift from Adhik Maas overcorrections takes centuries to accumulate
+                                                    </p>
+                                                </div>
+
+                                                <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-gray-500">
+                                                    <p className="font-medium text-gray-800 mb-2">📅 Historical occurrences:</p>
+                                                    <p className="text-sm text-gray-600">
+                                                        • Last: <strong>1963</strong> (Pausha month was omitted)
+                                                        <br/>
+                                                        • Before that: <strong>1776</strong>
+                                                        <br/>
+                                                        • Next expected: Around <strong>2283</strong>!
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-white rounded-xl p-4 md:p-6 mb-4 border border-gray-200">
+                                            <h4 className="text-lg md:text-xl font-semibold text-gray-900 mb-4 text-center">
+                                                🧮 The Math Behind Kshaya Masa
+                                            </h4>
+
+                                            <div className="space-y-3">
+                                                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                                    <p className="font-medium text-gray-800 mb-2">📏 Key Numbers:</p>
+                                                    <div className="space-y-1 text-sm text-gray-600">
+                                                        <p>• Lunar month (new moon to new moon): <strong className="text-gray-900">~29.53 days</strong></p>
+                                                        <p>• Solar month (Sankranti to Sankranti): <strong className="text-gray-900">~30.4 days</strong></p>
+                                                        <p>• Difference: <strong className="text-gray-900">~0.87 days</strong> per month</p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                                    <p className="font-medium text-gray-800 mb-2">⏳ The Accumulation:</p>
+                                                    <div className="space-y-2 text-sm text-gray-600">
+                                                        <p>Each lunar month is <strong className="text-gray-900">0.87 days shorter</strong> than the time between Sankrantis.</p>
+                                                        <p>Over time, the lunar months "slide forward" relative to Sankrantis.</p>
+                                                        <div className="bg-white p-3 rounded-lg mt-2 border border-gray-200">
+                                                            <p className="text-xs font-medium text-gray-700 mb-1">The Critical Point:</p>
+                                                            <p className="text-xs text-gray-600">
+                                                                After ~141 years: The cumulative drift becomes large enough that a lunar month starts
+                                                                <strong className="text-gray-900"> after one Sankranti</strong> and ends
+                                                                <strong className="text-gray-900"> after the next Sankranti</strong>
+                                                            </p>
+                                                            <p className="text-xs text-gray-600 mt-2">
+                                                                Result: <strong className="text-gray-900">TWO Sankrantis</strong> occur within a single lunar month!
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                                    <p className="font-medium text-gray-800 mb-2">🔄 Why So Rare?</p>
+                                                    <div className="space-y-2 text-sm text-gray-600">
+                                                        <p>Adhik Maas adds extra months every ~3 years, which <strong className="text-gray-900">slows down</strong> this forward drift.</p>
+                                                        <p>But Adhik Maas slightly <strong className="text-gray-900">overcorrects</strong> - adding ~19 days more than needed.</p>
+                                                        <p className="mt-2 bg-white p-3 rounded-lg border border-gray-200">
+                                                            <span className="text-xs font-medium text-gray-700">The Balance:</span>
+                                                            <br/>
+                                                            <span className="text-xs">It takes <strong className="text-gray-900">~140-190 years</strong> of these small overcorrections to accumulate
+                                                            enough drift for 2 Sankrantis to squeeze into one lunar month!</span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-white rounded-xl p-4 md:p-6 mb-4 border border-gray-200">
+                                            <h4 className="text-lg md:text-xl font-semibold text-gray-900 mb-4 text-center">
+                                                🎉 What Happens to Festivals?
+                                            </h4>
+
+                                            <div className="space-y-3">
+                                                <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-gray-500">
+                                                    <p className="font-medium text-gray-800 mb-2">✅ Festivals Are NOT Skipped!</p>
+                                                    <p className="text-sm text-gray-600 mb-2">
+                                                        When a month name is lost (Kshaya Masa), the festivals simply move to the adjacent months.
+                                                    </p>
+                                                </div>
+
+                                                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                                    <p className="font-medium text-gray-800 mb-2">📍 Example from 1963:</p>
+                                                    <div className="space-y-2 text-sm text-gray-600">
+                                                        <p>When <strong className="text-gray-900">Pausha month</strong> was skipped in 1963:</p>
+                                                        <div className="bg-white p-3 rounded-lg mt-2 border border-gray-200">
+                                                            <p className="text-xs mb-2">
+                                                                <strong className="text-gray-800">What happened:</strong>
+                                                            </p>
+                                                            <p className="text-xs">• The lunar month that would have been "Pausha" contained <strong className="text-gray-900">TWO Sankrantis</strong></p>
+                                                            <p className="text-xs mt-1">• This month was named by the <strong className="text-gray-900">first Sankranti</strong> (making it the end of Margashirsha)</p>
+                                                            <p className="text-xs mt-1">• The <strong className="text-gray-900">second Sankranti</strong> immediately started the next month (Magha)</p>
+                                                            <p className="text-xs mt-1">• The "Pausha" name was simply skipped - we went from Margashirsha → Magha</p>
+                                                        </div>
+                                                        <div className="bg-white p-3 rounded-lg mt-2 border border-gray-200">
+                                                            <p className="text-xs mb-2">
+                                                                <strong className="text-gray-800">What happened to festivals:</strong>
+                                                            </p>
+                                                            <p className="text-xs">• Festivals normally celebrated in <strong className="text-gray-900">early Pausha</strong> were celebrated in <strong className="text-gray-900">late Margashirsha</strong></p>
+                                                            <p className="text-xs mt-1">• Festivals normally celebrated in <strong className="text-gray-900">late Pausha</strong> were celebrated in <strong className="text-gray-900">early Magha</strong></p>
+                                                            <p className="text-xs mt-2 italic text-gray-500">The festivals still happened - they just occurred under different month names!</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-gray-500">
+                                                    <p className="font-medium text-gray-800 mb-2">🎯 The Key Rule:</p>
+                                                    <p className="text-sm text-gray-600">
+                                                        Festivals are tied to <strong className="text-gray-900">lunar tithis</strong> (moon phases), not month names.
+                                                        So even if a month name is skipped, the lunar days continue uninterrupted, and all festivals occur on schedule!
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-gray-900 text-white rounded-xl p-4 md:p-6">
+                                            <h4 className="text-lg md:text-xl font-semibold mb-3 text-center">
+                                                ⚖️ Perfect Balance System
+                                            </h4>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="bg-gray-800 rounded-lg p-4">
+                                                    <div className="text-3xl mb-2">➕</div>
+                                                    <p className="font-medium mb-1">Adhik Maas</p>
+                                                    <p className="text-sm opacity-90">When we're BEHIND</p>
+                                                    <p className="text-xs opacity-75 mt-1">Lunar month with 0 Sankranti</p>
+                                                    <p className="text-xs opacity-75">Every ~3 years (common)</p>
+                                                </div>
+                                                <div className="bg-gray-800 rounded-lg p-4">
+                                                    <div className="text-3xl mb-2">➖</div>
+                                                    <p className="font-medium mb-1">Kshaya Masa</p>
+                                                    <p className="text-sm opacity-90">When we're AHEAD</p>
+                                                    <p className="text-xs opacity-75 mt-1">Lunar month with 2 Sankrantis</p>
+                                                    <p className="text-xs opacity-75">Every ~140-190 years (rare)</p>
+                                                </div>
+                                            </div>
+                                            <div className="mt-4 text-center text-sm opacity-90">
+                                                <p className="font-medium">💡 Together they keep the calendar perfectly aligned with both Moon and Sun!</p>
+                                                <p className="text-xs mt-2 opacity-75">Adhik Maas corrects the main drift. Kshaya Masa corrects the overcorrection!</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                                        <button
+                                            onClick={() => setScreen(3)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 text-gray-700 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300"
+                                        >
+                                            ← Back
+                                        </button>
+                                        <button
+                                            onClick={() => setScreen(5)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 hover:scale-105 transition-all"
+                                        >
+                                            See the Results →
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Screen 5: Festival Examples and Fun Facts */}
+                        {screen === 5 && (
+                            <div className="fade-in">
+                                <div className="bg-white rounded-3xl shadow-lg p-4 md:p-8 border border-gray-200">
+                                    <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-6 text-center">
+                                        🎉 The Perfect System!
+                                    </h2>
+
+                                    {/* Festival Examples */}
+                                    <div className="bg-gray-50 p-4 md:p-6 rounded-2xl mb-6 border border-gray-200">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                            🎉 Festivals Stay in Place!
+                                        </h3>
+                                        <FestivalComparison months={12} />
+                                        <div className="mt-4 bg-white rounded-xl p-4 text-center border border-gray-200">
+                                            <p className="text-sm md:text-base font-medium text-gray-800">
+                                                💡 In the Hindu calendar, Diwali is ALWAYS in Kartik month!
+                                                <br/>
+                                                <span className="text-gray-900">But the Gregorian date changes every year.</span>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Fun Facts */}
+                                    <div className="bg-gray-50 p-4 md:p-6 rounded-2xl mb-6 border border-gray-200">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                            🤓 Cool Facts!
+                                        </h3>
+                                        <div className="space-y-3">
+                                            <div className="bg-white rounded-lg p-4 border border-gray-200">
+                                                <p className="font-medium text-gray-800">📜 Ancient Wisdom</p>
+                                                <p className="text-sm text-gray-600">This system has been used for over 1,500 years!</p>
+                                            </div>
+                                            <div className="bg-white rounded-lg p-4 border border-gray-200">
+                                                <p className="font-medium text-gray-800">🌍 Used Worldwide</p>
+                                                <p className="text-sm text-gray-600">Hebrew and Chinese calendars also use lunisolar systems (though with different calculation methods)</p>
+                                            </div>
+                                            <div className="bg-white rounded-lg p-4 border border-gray-200">
+                                                <p className="font-medium text-gray-800">🔢 Super Accurate</p>
+                                                <p className="text-sm text-gray-600">The error is less than 1 day in 70,000 years!</p>
+                                            </div>
+                                            <div className="bg-white rounded-lg p-4 border border-gray-200">
+                                                <p className="font-medium text-gray-800">🔮 Extremely Rare Event</p>
+                                                <p className="text-sm text-gray-600">The last Kshaya Masa (skipped month) was in 1963 - won't happen again until around 2283!</p>
+                                            </div>
+                                            <div className="bg-white rounded-lg p-4 border border-gray-200">
+                                                <p className="font-medium text-gray-800">🌟 Solar + Lunar = Perfect</p>
+                                                <p className="text-sm text-gray-600">Combines the best of both: lunar months for religious dates, solar year for seasons</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-gray-900 text-white rounded-xl p-4 md:p-6 mb-6">
+                                        <h3 className="text-xl md:text-2xl font-semibold mb-3 text-center">
+                                            ⚖️ Perfect Balance
+                                        </h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="bg-gray-800 rounded-lg p-4">
+                                                <div className="text-3xl mb-2">➕</div>
+                                                <p className="font-semibold mb-1">Adhik Maas</p>
+                                                <p className="text-sm opacity-90">When we're BEHIND</p>
+                                                <p className="text-xs opacity-75 mt-1">Every ~3 years</p>
+                                            </div>
+                                            <div className="bg-gray-800 rounded-lg p-4">
+                                                <div className="text-3xl mb-2">➖</div>
+                                                <p className="font-semibold mb-1">Kshaya Masa</p>
+                                                <p className="text-sm opacity-90">When we're AHEAD</p>
+                                                <p className="text-xs opacity-75 mt-1">Every ~140-190 years</p>
+                                            </div>
+                                        </div>
+                                        <div className="mt-4 text-center text-sm opacity-90">
+                                            <p className="font-semibold">💡 Together they keep the calendar perfectly aligned with both Moon and Sun!</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                                        <button
+                                            onClick={() => setScreen(4)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 text-gray-700 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300"
+                                        >
+                                            ← Back
+                                        </button>
+                                        <button
+                                            onClick={() => { setScreen(0); setYears(1); }}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 hover:scale-105 transition-all"
+                                        >
+                                            🔄 Start Over
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<HinduCalendarApp />);
+    </script>
+</body>
+</html>

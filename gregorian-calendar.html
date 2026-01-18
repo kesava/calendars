@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Gregorian Calendar & Easter</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .float { animation: float 3s ease-in-out infinite; }
+        .bounce { animation: bounce 1s ease-in-out infinite; }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+
+        body {
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Leap Year Visualization
+        function LeapYearAnimation() {
+            const [year, setYear] = useState(2024);
+            const [isPlaying, setIsPlaying] = useState(false);
+
+            useEffect(() => {
+                if (!isPlaying) return;
+                const timer = setInterval(() => {
+                    setYear((y) => (y >= 2100 ? 2000 : y + 1));
+                }, 500);
+                return () => clearInterval(timer);
+            }, [isPlaying]);
+
+            const isLeapYear = (y) => {
+                if (y % 400 === 0) return { leap: true, rule: 'Divisible by 400' };
+                if (y % 100 === 0) return { leap: false, rule: 'Divisible by 100 (but not 400)' };
+                if (y % 4 === 0) return { leap: true, rule: 'Divisible by 4' };
+                return { leap: false, rule: 'Not divisible by 4' };
+            };
+
+            const result = isLeapYear(year);
+
+            return (
+                <div className="text-center">
+                    <div className="bg-gray-900 text-white rounded-2xl p-8 mb-6">
+                        <div className="text-6xl font-semibold mb-2">{year}</div>
+                        <div className={`text-2xl font-semibold ${result.leap ? 'text-green-400' : 'text-red-400'}`}>
+                            {result.leap ? '✓ LEAP YEAR' : '✗ NOT A LEAP YEAR'}
+                        </div>
+                        <div className="text-sm mt-2 opacity-75">{result.rule}</div>
+                    </div>
+
+                    <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-4">
+                        <h4 className="font-semibold text-gray-900 mb-3">The Rules:</h4>
+                        <div className="space-y-2 text-sm text-gray-600">
+                            <div className={`p-3 rounded-lg ${year % 400 === 0 ? 'bg-green-100 border-2 border-green-500' : 'bg-white border border-gray-200'}`}>
+                                <p className="font-medium text-gray-800">1. Divisible by 400? → LEAP YEAR</p>
+                                <p className="text-xs text-gray-500">e.g., 2000, 2400</p>
+                            </div>
+                            <div className={`p-3 rounded-lg ${year % 100 === 0 && year % 400 !== 0 ? 'bg-red-100 border-2 border-red-500' : 'bg-white border border-gray-200'}`}>
+                                <p className="font-medium text-gray-800">2. Else if divisible by 100? → NOT LEAP</p>
+                                <p className="text-xs text-gray-500">e.g., 1900, 2100</p>
+                            </div>
+                            <div className={`p-3 rounded-lg ${year % 4 === 0 && year % 100 !== 0 ? 'bg-green-100 border-2 border-green-500' : 'bg-white border border-gray-200'}`}>
+                                <p className="font-medium text-gray-800">3. Else if divisible by 4? → LEAP YEAR</p>
+                                <p className="text-xs text-gray-500">e.g., 2024, 2028</p>
+                            </div>
+                            <div className={`p-3 rounded-lg ${year % 4 !== 0 ? 'bg-red-100 border-2 border-red-500' : 'bg-white border border-gray-200'}`}>
+                                <p className="font-medium text-gray-800">4. Otherwise → NOT LEAP</p>
+                                <p className="text-xs text-gray-500">e.g., 2023, 2025</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 mb-4 justify-center">
+                        <button
+                            onClick={() => setYear(Math.max(1582, year - 1))}
+                            className="px-4 py-2 bg-gray-700 text-white rounded-full font-semibold hover:bg-gray-600"
+                        >
+                            −1
+                        </button>
+                        <input
+                            type="number"
+                            min="1582"
+                            max="3000"
+                            value={year}
+                            onChange={(e) => setYear(Number(e.target.value))}
+                            className="w-24 px-4 py-2 rounded-lg border border-gray-300 text-center"
+                        />
+                        <button
+                            onClick={() => setYear(year + 1)}
+                            className="px-4 py-2 bg-gray-700 text-white rounded-full font-semibold hover:bg-gray-600"
+                        >
+                            +1
+                        </button>
+                    </div>
+
+                    <button
+                        onClick={() => setIsPlaying(!isPlaying)}
+                        className="px-6 py-2 bg-gray-200 text-gray-700 rounded-full text-sm hover:bg-gray-300 transition-colors"
+                    >
+                        {isPlaying ? '⏸ Pause' : '▶ Auto Play'}
+                    </button>
+                </div>
+            );
+        }
+
+        // Julian vs Gregorian Drift
+        function CalendarDriftAnimation() {
+            const [years, setYears] = useState(100);
+            const [isPlaying, setIsPlaying] = useState(false);
+
+            useEffect(() => {
+                if (!isPlaying || years >= 2000) return;
+                const timer = setInterval(() => {
+                    setYears((y) => Math.min(y + 100, 2000));
+                }, 800);
+                return () => clearInterval(timer);
+            }, [isPlaying, years]);
+
+            // Julian calendar drifts ~1 day per 128 years
+            // After years from 1582, drift = years / 128
+            const driftDays = Math.floor(years / 128);
+
+            return (
+                <div className="text-center">
+                    <div className="bg-gray-900 text-white rounded-2xl p-8 mb-6">
+                        <div className="text-sm mb-2">Years since calendar split (1582):</div>
+                        <div className="text-6xl font-semibold mb-4">{years}</div>
+                        <div className="text-3xl font-semibold text-red-400">
+                            {driftDays} days apart
+                        </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-white p-4 rounded-lg border border-gray-200">
+                                <div className="text-3xl mb-2">📅</div>
+                                <p className="font-semibold text-gray-900 mb-2">Gregorian Calendar</p>
+                                <p className="text-sm text-gray-600">More accurate leap year rule</p>
+                                <p className="text-xs text-gray-500 mt-2">Drifts ~1 day per 3,236 years</p>
+                            </div>
+                            <div className="bg-white p-4 rounded-lg border border-gray-200">
+                                <div className="text-3xl mb-2">📜</div>
+                                <p className="font-semibold text-gray-900 mb-2">Julian Calendar</p>
+                                <p className="text-sm text-gray-600">Simple: leap every 4 years</p>
+                                <p className="text-xs text-gray-500 mt-2">Drifts ~1 day per 128 years</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-xl border border-gray-200 mb-4">
+                        <p className="text-sm text-gray-600 mb-2">
+                            <span className="font-semibold text-gray-900">Current difference:</span>
+                        </p>
+                        <p className="text-base text-gray-700">
+                            When it's March 1st (Gregorian), the Julian calendar shows February {28 - driftDays} (still in February!)
+                        </p>
+                        <p className="text-xs text-gray-500 mt-2">
+                            As of 2024: Julian is 13 days behind Gregorian
+                        </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 mb-4 justify-center">
+                        <button
+                            onClick={() => setYears(Math.max(0, years - 100))}
+                            className="px-4 py-2 bg-gray-700 text-white rounded-full font-semibold hover:bg-gray-600"
+                        >
+                            −100y
+                        </button>
+                        <input
+                            type="range"
+                            min="0"
+                            max="2000"
+                            step="100"
+                            value={years}
+                            onChange={(e) => { setYears(Number(e.target.value)); setIsPlaying(false); }}
+                            className="w-48"
+                        />
+                        <button
+                            onClick={() => setYears(Math.min(2000, years + 100))}
+                            className="px-4 py-2 bg-gray-700 text-white rounded-full font-semibold hover:bg-gray-600"
+                        >
+                            +100y
+                        </button>
+                    </div>
+
+                    <button
+                        onClick={() => setIsPlaying(!isPlaying)}
+                        className="px-6 py-2 bg-gray-200 text-gray-700 rounded-full text-sm hover:bg-gray-300 transition-colors"
+                    >
+                        {isPlaying ? '⏸ Pause' : '▶ Play'}
+                    </button>
+                </div>
+            );
+        }
+
+        // Easter Calculation
+        function EasterCalculation() {
+            const [year, setYear] = useState(2024);
+
+            // Simplified Gregorian Easter calculation (Meeus/Jones/Butcher algorithm)
+            const calculateEaster = (y, isGregorian = true) => {
+                let a, b, c, d, e, f, g, h, i, k, l, m, month, day;
+
+                if (isGregorian) {
+                    a = y % 19;
+                    b = Math.floor(y / 100);
+                    c = y % 100;
+                    d = Math.floor(b / 4);
+                    e = b % 4;
+                    f = Math.floor((b + 8) / 25);
+                    g = Math.floor((b - f + 1) / 3);
+                    h = (19 * a + b - d - g + 15) % 30;
+                    i = Math.floor(c / 4);
+                    k = c % 4;
+                    l = (32 + 2 * e + 2 * i - h - k) % 7;
+                    m = Math.floor((a + 11 * h + 22 * l) / 451);
+                    month = Math.floor((h + l - 7 * m + 114) / 31);
+                    day = ((h + l - 7 * m + 114) % 31) + 1;
+                } else {
+                    // Julian calculation (used by Eastern Orthodox)
+                    a = y % 4;
+                    b = y % 7;
+                    c = y % 19;
+                    d = (19 * c + 15) % 30;
+                    e = (2 * a + 4 * b - d + 34) % 7;
+                    month = Math.floor((d + e + 114) / 31);
+                    day = ((d + e + 114) % 31) + 1;
+
+                    // Convert to Gregorian date (add 13 days for 2000-2099)
+                    day += 13;
+                    if (day > 30 && month === 3) {
+                        day -= 31;
+                        month = 4;
+                    } else if (day > 30 && month === 4) {
+                        day -= 30;
+                        month = 5;
+                    }
+                }
+
+                const monthNames = ['', 'January', 'February', 'March', 'April', 'May', 'June'];
+                return { month: monthNames[month], day, monthNum: month };
+            };
+
+            const gregorianEaster = calculateEaster(year, true);
+            const julianEaster = calculateEaster(year, false);
+
+            // Calculate vernal equinox (approximately March 20-21)
+            const vernalEquinox = { month: 'March', day: 20 };
+
+            // Calculate full moon after equinox (this is simplified)
+            const fullMoonDay = gregorianEaster.monthNum === 3 ? gregorianEaster.day - 7 : 15;
+
+            return (
+                <div className="text-center">
+                    <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-6">
+                        <div className="text-sm text-gray-600 mb-2">Calculate Easter for:</div>
+                        <div className="flex items-center gap-2 justify-center mb-6">
+                            <button
+                                onClick={() => setYear(year - 1)}
+                                className="px-4 py-2 bg-gray-700 text-white rounded-full font-semibold hover:bg-gray-600"
+                            >
+                                −1
+                            </button>
+                            <input
+                                type="number"
+                                min="1583"
+                                max="3000"
+                                value={year}
+                                onChange={(e) => setYear(Number(e.target.value))}
+                                className="w-32 px-4 py-3 text-2xl font-semibold rounded-lg border border-gray-300 text-center"
+                            />
+                            <button
+                                onClick={() => setYear(year + 1)}
+                                className="px-4 py-2 bg-gray-700 text-white rounded-full font-semibold hover:bg-gray-600"
+                            >
+                                +1
+                            </button>
+                        </div>
+
+                        <div className="space-y-3">
+                            <div className="bg-white p-4 rounded-lg border-2 border-blue-500">
+                                <p className="text-sm text-gray-600 mb-1">Western (Gregorian) Easter:</p>
+                                <p className="text-3xl font-semibold text-gray-900">
+                                    {gregorianEaster.month} {gregorianEaster.day}
+                                </p>
+                            </div>
+                            <div className="bg-white p-4 rounded-lg border-2 border-purple-500">
+                                <p className="text-sm text-gray-600 mb-1">Eastern Orthodox Easter:</p>
+                                <p className="text-3xl font-semibold text-gray-900">
+                                    {julianEaster.month} {julianEaster.day}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">(Gregorian calendar equivalent)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        <h4 className="font-semibold text-gray-900 mb-4">How Easter is Calculated:</h4>
+                        <div className="space-y-3 text-left">
+                            <div className="bg-white p-4 rounded-lg border border-gray-200">
+                                <p className="font-medium text-gray-800 mb-2">Step 1: Find the Vernal Equinox</p>
+                                <p className="text-sm text-gray-600">First day of spring (around March 20-21)</p>
+                                <p className="text-xs text-gray-500 mt-1">📅 {vernalEquinox.month} {vernalEquinox.day}</p>
+                            </div>
+                            <div className="bg-white p-4 rounded-lg border border-gray-200">
+                                <p className="font-medium text-gray-800 mb-2">Step 2: Find the Paschal Full Moon</p>
+                                <p className="text-sm text-gray-600">First full moon ON or AFTER the vernal equinox</p>
+                                <p className="text-xs text-gray-500 mt-1">🌕 Around March {fullMoonDay}</p>
+                            </div>
+                            <div className="bg-white p-4 rounded-lg border border-gray-200">
+                                <p className="font-medium text-gray-800 mb-2">Step 3: Find the Following Sunday</p>
+                                <p className="text-sm text-gray-600">Easter is the FIRST SUNDAY after the Paschal Full Moon</p>
+                                <p className="text-xs text-gray-500 mt-1">✝️ {gregorianEaster.month} {gregorianEaster.day}</p>
+                            </div>
+                        </div>
+
+                        <div className="mt-4 bg-gray-900 text-white p-4 rounded-lg text-sm">
+                            <p className="font-semibold mb-2">🔑 Key Difference:</p>
+                            <p className="opacity-90">
+                                • Western: Uses Gregorian calendar & modern astronomical calculations<br/>
+                                • Eastern Orthodox: Uses Julian calendar & traditional tables (often different dates!)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function GregorianCalendarApp() {
+            const [screen, setScreen] = useState(0);
+
+            const screens = [
+                { title: "Welcome", icon: "🌍" },
+                { title: "Gregorian System", icon: "📅" },
+                { title: "Julian vs Gregorian", icon: "⚖️" },
+                { title: "Easter Calculation", icon: "✝️" }
+            ];
+
+            return (
+                <div className="min-h-screen bg-gray-50 p-4 md:p-8 overflow-x-hidden">
+                    <div className="max-w-4xl mx-auto w-full">
+                        {/* Progress Dots */}
+                        <div className="flex justify-center gap-3 mb-8">
+                            {screens.map((s, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => setScreen(idx)}
+                                    className={`transition-all duration-300 ${
+                                        idx === screen
+                                            ? 'w-12 h-12 rounded-full shadow-lg scale-110'
+                                            : 'w-10 h-10 rounded-full shadow opacity-60 hover:opacity-100'
+                                    } ${idx === screen ? 'bg-gray-800' : 'bg-gray-400'} flex items-center justify-center text-2xl`}
+                                >
+                                    {s.icon}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Screen 0: Welcome */}
+                        {screen === 0 && (
+                            <div className="fade-in">
+                                <div className="bg-white rounded-3xl shadow-lg p-6 md:p-12 text-center border border-gray-200">
+                                    <div className="text-6xl md:text-8xl mb-6 float">🌍</div>
+                                    <h1 className="text-3xl md:text-6xl font-semibold text-gray-900 mb-6">
+                                        The Gregorian Calendar
+                                    </h1>
+                                    <p className="text-lg text-gray-600 mb-8">
+                                        The World's Most Widely Used Calendar
+                                    </p>
+
+                                    <div className="space-y-6 mt-8">
+                                        <div className="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-200">
+                                            <p className="text-xl md:text-2xl font-semibold mb-4 text-gray-800">
+                                                A Solar Calendar
+                                            </p>
+                                            <div className="bg-white p-4 rounded-xl border border-gray-200 max-w-md mx-auto">
+                                                <div className="text-4xl mb-2">☀️</div>
+                                                <div className="font-semibold text-lg text-gray-800">Follows the Sun</div>
+                                                <div className="text-sm text-gray-600">Synced with Earth's orbit</div>
+                                                <div className="text-2xl font-semibold text-gray-700 mt-2">365.2425 days/year</div>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-200">
+                                            <div className="text-5xl mb-4 bounce">📜</div>
+                                            <p className="text-xl md:text-2xl font-semibold text-gray-800">
+                                                History
+                                            </p>
+                                            <p className="text-base md:text-lg text-gray-700 mt-3">
+                                                Introduced by <span className="text-gray-900 font-medium">Pope Gregory XIII</span> in <span className="text-gray-900 font-medium">1582</span>
+                                                <br/>
+                                                <br/>
+                                                Replaced the Julian calendar to fix the drifting equinox
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            onClick={() => setScreen(1)}
+                                            className="px-8 md:px-12 py-4 md:py-5 rounded-full text-xl md:text-2xl font-semibold bg-gray-900 text-white shadow-lg hover:bg-gray-800 hover:scale-105 transition-all transform"
+                                        >
+                                            Learn How It Works →
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Screen 1: Gregorian System */}
+                        {screen === 1 && (
+                            <div className="fade-in">
+                                <div className="bg-white rounded-3xl shadow-lg p-4 md:p-8 border border-gray-200">
+                                    <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-6 text-center">
+                                        📅 The Gregorian System
+                                    </h2>
+
+                                    <div className="bg-gray-50 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                            Leap Year Rules
+                                        </h3>
+                                        <LeapYearAnimation />
+                                    </div>
+
+                                    <div className="bg-gray-50 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                            Why These Complex Rules?
+                                        </h3>
+
+                                        <div className="space-y-4">
+                                            <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200">
+                                                <p className="text-sm md:text-base text-gray-600 mb-3">
+                                                    Earth's orbit around the Sun takes <span className="text-gray-900 font-medium">365.2422 days</span> (not exactly 365.25!)
+                                                </p>
+                                                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-2 text-sm text-gray-600">
+                                                    <p>• If we add a leap day every 4 years: Average = 365.25 days</p>
+                                                    <p>• Difference: 365.25 - 365.2422 = <span className="text-gray-900 font-medium">0.0078 days/year too long</span></p>
+                                                    <p>• Over 128 years: We gain 1 extra day!</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200">
+                                                <p className="font-semibold text-gray-900 mb-3">The Gregorian Fix:</p>
+                                                <div className="space-y-2 text-sm text-gray-600">
+                                                    <p>• Skip leap years on century years (1700, 1800, 1900, 2100)</p>
+                                                    <p>• EXCEPT those divisible by 400 (1600, 2000, 2400)</p>
+                                                    <p>• This gives: 97 leap years per 400 years</p>
+                                                    <p>• Average: 365.2425 days - only 0.0003 days/year off!</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="bg-gray-900 text-white rounded-xl p-4 md:p-6">
+                                                <p className="text-center font-semibold mb-2">
+                                                    🎯 Incredibly Accurate
+                                                </p>
+                                                <p className="text-sm text-center opacity-90">
+                                                    The Gregorian calendar drifts only about 1 day every 3,236 years!
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                                        <button
+                                            onClick={() => setScreen(0)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 text-gray-700 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300"
+                                        >
+                                            ← Back
+                                        </button>
+                                        <button
+                                            onClick={() => setScreen(2)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 hover:scale-105 transition-all"
+                                        >
+                                            Compare with Julian →
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Screen 2: Julian vs Gregorian */}
+                        {screen === 2 && (
+                            <div className="fade-in">
+                                <div className="bg-white rounded-3xl shadow-lg p-4 md:p-8 border border-gray-200">
+                                    <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-6 text-center">
+                                        ⚖️ Julian vs Gregorian
+                                    </h2>
+
+                                    <div className="bg-gray-50 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                            The Growing Divide
+                                        </h3>
+                                        <CalendarDriftAnimation />
+                                    </div>
+
+                                    <div className="bg-gray-50 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                            Eastern Orthodox Church
+                                        </h3>
+
+                                        <div className="space-y-4">
+                                            <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200">
+                                                <p className="font-semibold text-gray-900 mb-3">Still Uses the Julian Calendar</p>
+                                                <p className="text-sm text-gray-600 mb-2">
+                                                    Many Eastern Orthodox churches continue to use the Julian calendar for religious dates, including Easter.
+                                                </p>
+                                                <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm text-gray-600">
+                                                    <p className="font-medium text-gray-800 mb-1">Current Impact (2024):</p>
+                                                    <p>• Julian calendar is 13 days behind Gregorian</p>
+                                                    <p>• Orthodox Christmas (Dec 25 Julian) = Jan 7 Gregorian</p>
+                                                    <p>• Orthodox Easter often falls 1-5 weeks after Western Easter</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200">
+                                                <p className="font-semibold text-gray-900 mb-3">Why the Difference?</p>
+                                                <div className="space-y-2 text-sm text-gray-600">
+                                                    <p>• Julian calendar: Leap year every 4 years (simple rule)</p>
+                                                    <p>• Average year: 365.25 days</p>
+                                                    <p>• Actual solar year: 365.2422 days</p>
+                                                    <p>• Difference: ~11 minutes/year = 1 day per 128 years</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="bg-gray-900 text-white rounded-xl p-4 md:p-6">
+                                                <p className="text-center font-semibold mb-2">
+                                                    ⏰ The Drift Continues
+                                                </p>
+                                                <p className="text-sm text-center opacity-90">
+                                                    The gap between Julian and Gregorian calendars grows by 3 days every 400 years.
+                                                    By 2100, they'll be 14 days apart!
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                                        <button
+                                            onClick={() => setScreen(1)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 text-gray-700 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300"
+                                        >
+                                            ← Back
+                                        </button>
+                                        <button
+                                            onClick={() => setScreen(3)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 hover:scale-105 transition-all"
+                                        >
+                                            Easter Calculation →
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Screen 3: Easter Calculation */}
+                        {screen === 3 && (
+                            <div className="fade-in">
+                                <div className="bg-white rounded-3xl shadow-lg p-4 md:p-8 border border-gray-200">
+                                    <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-6 text-center">
+                                        ✝️ Calculating Easter
+                                    </h2>
+
+                                    <div className="bg-gray-50 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                            The Computus
+                                        </h3>
+                                        <p className="text-sm text-gray-600 text-center mb-6">
+                                            The calculation of Easter's date (from Latin "computus" = computation)
+                                        </p>
+                                        <EasterCalculation />
+                                    </div>
+
+                                    <div className="bg-gray-50 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                            Why Is Easter So Complex?
+                                        </h3>
+
+                                        <div className="space-y-4">
+                                            <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200">
+                                                <p className="font-semibold text-gray-900 mb-3">Three Different Cycles:</p>
+                                                <div className="space-y-2 text-sm text-gray-600">
+                                                    <p>• <span className="font-medium text-gray-800">Solar cycle:</span> Earth's 365.2422-day orbit</p>
+                                                    <p>• <span className="font-medium text-gray-800">Lunar cycle:</span> Moon's 29.53-day phases</p>
+                                                    <p>• <span className="font-medium text-gray-800">Weekly cycle:</span> 7-day weeks (need a Sunday!)</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200">
+                                                <p className="font-semibold text-gray-900 mb-3">The Rule:</p>
+                                                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 text-sm text-gray-700">
+                                                    <p className="font-medium mb-2">Easter is the first Sunday after the first full moon occurring on or after the vernal equinox.</p>
+                                                    <p className="text-xs text-gray-500 mt-2">
+                                                        (Using ecclesiastical definitions, not astronomical ones!)
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200">
+                                                <p className="font-semibold text-gray-900 mb-3">Why Different Dates?</p>
+                                                <div className="space-y-2 text-sm text-gray-600">
+                                                    <p>• Western uses Gregorian calendar & modern equinox (March 20/21)</p>
+                                                    <p>• Orthodox uses Julian calendar & old equinox (April 3 in Gregorian)</p>
+                                                    <p>• Both use different tables for moon phases</p>
+                                                    <p>• Result: Usually different dates, occasionally the same!</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="bg-gray-900 text-white rounded-xl p-4 md:p-6">
+                                                <p className="text-center font-semibold mb-2">
+                                                    📅 Date Range
+                                                </p>
+                                                <p className="text-sm text-center opacity-90">
+                                                    Western Easter: March 22 - April 25<br/>
+                                                    Orthodox Easter: April 4 - May 8 (in Gregorian dates)
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                                        <button
+                                            onClick={() => setScreen(2)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 text-gray-700 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300"
+                                        >
+                                            ← Back
+                                        </button>
+                                        <button
+                                            onClick={() => setScreen(0)}
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 hover:scale-105 transition-all"
+                                        >
+                                            🔄 Start Over
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<GregorianCalendarApp />);
+    </script>
+</body>
+</html>

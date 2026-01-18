@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Systems Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .float { animation: float 3s ease-in-out infinite; }
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+
+        body {
+            overflow-x: hidden;
+        }
+
+        .card {
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen p-4 md:p-8">
+        <div class="max-w-6xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-12 fade-in">
+                <div class="text-6xl md:text-8xl mb-6 float">🌍</div>
+                <h1 class="text-4xl md:text-6xl font-semibold text-gray-900 mb-4">
+                    Calendar Systems Explorer
+                </h1>
+                <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+                    Explore how different cultures and religions track time through interactive visualizations
+                </p>
+            </div>
+
+            <!-- Calendar Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                <!-- Hindu Calendar -->
+                <a href="hindu-calendar.html" class="card bg-white rounded-2xl p-6 md:p-8 border border-gray-200 block fade-in" style="animation-delay: 0.1s">
+                    <div class="text-5xl mb-4">🕉️</div>
+                    <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 mb-3">
+                        The Hindu Calendar
+                    </h2>
+                    <p class="text-gray-600 mb-4">
+                        A lunisolar calendar using astronomical observation. Learn about Adhik Maas (extra months) and the rare Kshaya Masa (skipped months).
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Lunisolar</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Astronomical</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Sankranti</span>
+                    </div>
+                    <div class="text-gray-900 font-medium flex items-center gap-2">
+                        Explore Interactive Guide
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- Hebrew Calendar -->
+                <a href="jewish-calendar.html" class="card bg-white rounded-2xl p-6 md:p-8 border border-gray-200 block fade-in" style="animation-delay: 0.2s">
+                    <div class="text-5xl mb-4">🕎</div>
+                    <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 mb-3">
+                        The Hebrew Calendar
+                    </h2>
+                    <p class="text-gray-600 mb-4">
+                        A lunisolar calendar with a fixed 19-year cycle (Metonic cycle). Discover how Adar II keeps the calendar synchronized with seasons.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Lunisolar</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Fixed Cycle</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">19 Years</span>
+                    </div>
+                    <div class="text-gray-900 font-medium flex items-center gap-2">
+                        Explore Interactive Guide
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- Islamic Calendar -->
+                <a href="islamic-calendar.html" class="card bg-white rounded-2xl p-6 md:p-8 border border-gray-200 block fade-in" style="animation-delay: 0.3s">
+                    <div class="text-5xl mb-4">☪️</div>
+                    <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 mb-3">
+                        The Islamic Calendar
+                    </h2>
+                    <p class="text-gray-600 mb-4">
+                        A purely lunar calendar that drifts through all seasons. Watch Ramadan cycle through winter, spring, summer, and fall over 33 years.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Purely Lunar</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Seasonal Drift</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">30-Year Cycle</span>
+                    </div>
+                    <div class="text-gray-900 font-medium flex items-center gap-2">
+                        Explore Interactive Guide
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- Gregorian Calendar -->
+                <a href="gregorian-calendar.html" class="card bg-white rounded-2xl p-6 md:p-8 border border-gray-200 block fade-in" style="animation-delay: 0.4s">
+                    <div class="text-5xl mb-4">🌍</div>
+                    <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 mb-3">
+                        The Gregorian Calendar
+                    </h2>
+                    <p class="text-gray-600 mb-4">
+                        The world's most widely used solar calendar. Understand leap year rules, the Julian-Gregorian split, and the complex Easter calculation.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Solar</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Leap Years</span>
+                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Easter</span>
+                    </div>
+                    <div class="text-gray-900 font-medium flex items-center gap-2">
+                        Explore Interactive Guide
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Additional Resource -->
+            <div class="bg-white rounded-2xl p-6 md:p-8 border border-gray-200 fade-in" style="animation-delay: 0.5s">
+                <div class="flex items-start gap-4">
+                    <div class="text-4xl">📊</div>
+                    <div class="flex-1">
+                        <h3 class="text-xl md:text-2xl font-semibold text-gray-900 mb-2">
+                            Bonus: Leap Year Explained
+                        </h3>
+                        <p class="text-gray-600 mb-3">
+                            A simplified interactive visualization showing why we need leap years and how seasons would drift without them.
+                        </p>
+                        <a href="index-simple.html" class="inline-flex items-center gap-2 text-gray-900 font-medium hover:gap-3 transition-all">
+                            View Leap Year Demo
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Section -->
+            <div class="mt-12 bg-gray-900 text-white rounded-2xl p-6 md:p-8 fade-in" style="animation-delay: 0.6s">
+                <h3 class="text-2xl md:text-3xl font-semibold mb-6 text-center">
+                    📚 Quick Comparison
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white bg-opacity-10 rounded-xl p-4">
+                        <div class="text-3xl mb-2">🕉️</div>
+                        <p class="font-semibold mb-2">Hindu</p>
+                        <p class="text-sm opacity-90">Astronomical rules determine when to add/skip months based on Sun's position</p>
+                    </div>
+                    <div class="bg-white bg-opacity-10 rounded-xl p-4">
+                        <div class="text-3xl mb-2">🕎</div>
+                        <p class="font-semibold mb-2">Hebrew</p>
+                        <p class="text-sm opacity-90">Fixed 19-year pattern repeats - predictable centuries in advance</p>
+                    </div>
+                    <div class="bg-white bg-opacity-10 rounded-xl p-4">
+                        <div class="text-3xl mb-2">☪️</div>
+                        <p class="font-semibold mb-2">Islamic</p>
+                        <p class="text-sm opacity-90">Pure lunar - intentionally drifts through all seasons every 33 years</p>
+                    </div>
+                    <div class="bg-white bg-opacity-10 rounded-xl p-4">
+                        <div class="text-3xl mb-2">🌍</div>
+                        <p class="font-semibold mb-2">Gregorian</p>
+                        <p class="text-sm opacity-90">Solar with complex leap rules - accurate to 1 day per 3,236 years</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="mt-12 text-center text-gray-500 text-sm fade-in" style="animation-delay: 0.7s">
+                <p>Interactive educational visualizations exploring calendar systems around the world</p>
+                <p class="mt-2">Each page features animations and explanations to help understand these fascinating systems</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
