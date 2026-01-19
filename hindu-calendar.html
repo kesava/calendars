@@ -493,9 +493,9 @@
                         {screen === 0 && (
                             <div className="fade-in">
                                 <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg p-6 md:p-12 text-center border border-gray-200 dark:border-gray-700 transition-colors">
-                                    <div className="text-6xl md:text-8xl mb-6 float" role="img" aria-label="Moon">🌙</div>
+                                    <div className="text-6xl md:text-8xl mb-6 float" role="img" aria-label="Om">🕉️</div>
                                     <h1 className="text-3xl md:text-6xl font-semibold text-gray-900 dark:text-white mb-6">
-                                        The Amazing Hindu Calendar
+                                        The Hindu Calendar
                                     </h1>
 
                                     <div className="space-y-6 mt-8">
@@ -889,16 +889,82 @@
                                         </div>
                                     </div>
 
+                                    {/* Festival Example: Ganesh Chaturthi */}
+                                    <div className="bg-gray-50 dark:bg-gray-700 p-4 md:p-6 rounded-2xl mb-6 border border-gray-200 dark:border-gray-600 transition-colors">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white mb-4 text-center">
+                                            🎊 Real Example: Ganesh Chaturthi During Adhik Maas
+                                        </h3>
+
+                                        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 mb-4 border border-gray-200 dark:border-gray-700 transition-colors">
+                                            <div className="text-center mb-4">
+                                                <p className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white">
+                                                    Ganesh Chaturthi = Bhadrapada Shukla Chaturthi
+                                                </p>
+                                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                                    (4th day of bright fortnight in Bhadrapada month)
+                                                </p>
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border-l-4 border-orange-400 dark:border-orange-500 transition-colors">
+                                                    <p className="font-medium text-gray-800 dark:text-gray-200 mb-2">❓ The Question:</p>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                        When Adhik Bhadrapada occurs (extra Bhadrapada month), which Chaturthi should we celebrate Ganesh Chaturthi on?
+                                                    </p>
+                                                </div>
+
+                                                <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border-l-4 border-green-500 dark:border-green-600 transition-colors">
+                                                    <p className="font-medium text-gray-800 dark:text-gray-200 mb-2">✅ The Answer:</p>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                                        Ganesh Chaturthi is celebrated in <strong className="text-gray-900 dark:text-white">Nija Bhadrapada</strong> (the regular Bhadrapada), NOT in Adhik Bhadrapada.
+                                                    </p>
+                                                    <div className="bg-white dark:bg-gray-700 p-3 rounded-lg mt-2 border border-gray-200 dark:border-gray-600 transition-colors">
+                                                        <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Why?</p>
+                                                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                                                            <strong className="text-gray-900 dark:text-white">Adhik Maas is considered inauspicious</strong> for major festivals and celebrations.
+                                                            Most important Hindu festivals, weddings, and religious ceremonies are NOT performed during Adhik Maas.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700 transition-colors">
+                                                    <p className="font-medium text-gray-800 dark:text-gray-200 mb-2">📅 Practical Example:</p>
+                                                    <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                                                        <p>If there's an Adhik Bhadrapada in a given year:</p>
+                                                        <div className="bg-white dark:bg-gray-700 p-3 rounded-lg border border-gray-200 dark:border-gray-600 space-y-1 transition-colors">
+                                                            <p className="text-xs">
+                                                                <strong className="text-gray-800 dark:text-gray-200">Month 1:</strong> Adhik Bhadrapada (extra month)
+                                                                <br/>
+                                                                <span className="text-gray-500 dark:text-gray-400">→ Chaturthi passes by, but Ganesh Chaturthi is NOT celebrated</span>
+                                                            </p>
+                                                            <p className="text-xs mt-2">
+                                                                <strong className="text-gray-800 dark:text-gray-200">Month 2:</strong> Nija Bhadrapada (regular month)
+                                                                <br/>
+                                                                <span className="text-green-600 dark:text-green-400 font-medium">→ Ganesh Chaturthi IS celebrated on this Chaturthi! 🎉</span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-orange-50 dark:bg-orange-900 border-2 border-orange-400 dark:border-orange-600 rounded-lg p-4 transition-colors">
+                                                    <p className="text-sm font-semibold text-orange-900 dark:text-orange-200 text-center">
+                                                        💡 General Rule: Most major festivals skip Adhik Maas and are celebrated in the corresponding Nija (regular) month
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                                         <button
                                             onClick={() => setScreen(2)}
-                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 text-gray-700 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300"
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                                         >
                                             ← Back
                                         </button>
                                         <button
                                             onClick={() => setScreen(4)}
-                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 hover:scale-105 transition-all"
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 dark:bg-gray-700 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 dark:hover:bg-gray-600 hover:scale-105 transition-all"
                                         >
                                             Next: Kshaya Masa →
                                         </button>
@@ -1122,16 +1188,105 @@
                                         </div>
                                     </div>
 
+                                    {/* Festival Example: Ganesh Chaturthi during Kshaya Masa */}
+                                    <div className="bg-gray-50 dark:bg-gray-700 p-4 md:p-6 rounded-2xl mb-6 border border-gray-200 dark:border-gray-600 transition-colors">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white mb-4 text-center">
+                                            🎊 Real Example: Ganesh Chaturthi During Kshaya Masa
+                                        </h3>
+
+                                        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 mb-4 border border-gray-200 dark:border-gray-700 transition-colors">
+                                            <div className="text-center mb-4">
+                                                <p className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white">
+                                                    What if Bhadrapada Month is Skipped?
+                                                </p>
+                                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                                    (Ganesh Chaturthi is normally on Bhadrapada Shukla Chaturthi)
+                                                </p>
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border-l-4 border-orange-400 dark:border-orange-500 transition-colors">
+                                                    <p className="font-medium text-gray-800 dark:text-gray-200 mb-2">❓ The Question:</p>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                        What happens to Ganesh Chaturthi when Bhadrapada is a Kshaya Masa (skipped month)?
+                                                        This would be extremely rare, but theoretically possible!
+                                                    </p>
+                                                </div>
+
+                                                <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border-l-4 border-purple-500 dark:border-purple-600 transition-colors">
+                                                    <p className="font-medium text-gray-800 dark:text-gray-200 mb-2">🔄 The Scenario:</p>
+                                                    <div className="bg-white dark:bg-gray-700 p-3 rounded-lg border border-gray-200 dark:border-gray-600 space-y-2 transition-colors">
+                                                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                                                            <strong className="text-gray-800 dark:text-gray-200">Normal:</strong> Shravana → Bhadrapada → Ashvina
+                                                        </p>
+                                                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                                                            <strong className="text-gray-800 dark:text-gray-200">With Kshaya Bhadrapada:</strong> Shravana → Ashvina
+                                                            <br/>
+                                                            <span className="text-red-600 dark:text-red-400 font-medium">(Bhadrapada month name is skipped!)</span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border-l-4 border-green-500 dark:border-green-600 transition-colors">
+                                                    <p className="font-medium text-gray-800 dark:text-gray-200 mb-2">✅ The Answer:</p>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                                        Ganesh Chaturthi would be celebrated in either:
+                                                    </p>
+                                                    <div className="space-y-2">
+                                                        <div className="bg-white dark:bg-gray-700 p-3 rounded-lg border border-gray-200 dark:border-gray-600 transition-colors">
+                                                            <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Option 1: Late Shravana</p>
+                                                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                                                                If the Chaturthi tithi falls in what would have been "Bhadrapada" but is now counted as late Shravana
+                                                            </p>
+                                                        </div>
+                                                        <div className="bg-white dark:bg-gray-700 p-3 rounded-lg border border-gray-200 dark:border-gray-600 transition-colors">
+                                                            <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Option 2: Early Ashvina</p>
+                                                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                                                                If the Chaturthi tithi falls in what is now counted as early Ashvina
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700 transition-colors">
+                                                    <p className="font-medium text-gray-800 dark:text-gray-200 mb-2">🔑 The Key Principle:</p>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                                        Remember: Festivals follow <strong className="text-gray-900 dark:text-white">tithis (lunar days)</strong>, not month names!
+                                                    </p>
+                                                    <div className="bg-white dark:bg-gray-700 p-3 rounded-lg border border-gray-200 dark:border-gray-600 transition-colors">
+                                                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                                                            • The Chaturthi tithi (4th lunar day of bright fortnight) still occurs
+                                                            <br/>
+                                                            • It just happens under a different month name (Shravana or Ashvina instead of Bhadrapada)
+                                                            <br/>
+                                                            • The festival is still celebrated at the correct astronomical time!
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-purple-50 dark:bg-purple-900 border-2 border-purple-400 dark:border-purple-600 rounded-lg p-4 transition-colors">
+                                                    <p className="text-sm font-semibold text-purple-900 dark:text-purple-200 text-center mb-2">
+                                                        💡 Important: Kshaya Bhadrapada is Extremely Rare!
+                                                    </p>
+                                                    <p className="text-xs text-purple-800 dark:text-purple-300 text-center">
+                                                        This hasn't happened in recorded history and won't happen in the foreseeable future.
+                                                        But the system is designed to handle it if it ever does!
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                                         <button
                                             onClick={() => setScreen(3)}
-                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 text-gray-700 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300"
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                                         >
                                             ← Back
                                         </button>
                                         <button
                                             onClick={() => setScreen(5)}
-                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 hover:scale-105 transition-all"
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 dark:bg-gray-700 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 dark:hover:bg-gray-600 hover:scale-105 transition-all"
                                         >
                                             See the Results →
                                         </button>
