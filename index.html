@@ -394,180 +394,216 @@
     <script src="shared-utils.js"></script>
     <script src="accessibility.js"></script>
     <script>
-        // Settings Panel Controls
-        const settingsToggle = document.getElementById('settings-toggle');
-        const settingsPanel = document.getElementById('settings-panel');
-        const settingsOverlay = document.getElementById('settings-overlay');
+        // Wait for all resources to load
+        window.addEventListener('load', () => {
+            // Settings Panel Controls
+            const settingsToggle = document.getElementById('settings-toggle');
+            const settingsPanel = document.getElementById('settings-panel');
+            const settingsOverlay = document.getElementById('settings-overlay');
 
-        // Toggle panel
-        settingsToggle.addEventListener('click', () => {
-            settingsPanel.classList.toggle('open');
-            settingsOverlay.classList.toggle('open');
-            settingsToggle.style.display = 'none';
-            soundManager.play('click');
-        });
-
-        // Close panel when clicking overlay
-        settingsOverlay.addEventListener('click', () => {
-            settingsPanel.classList.remove('open');
-            settingsOverlay.classList.remove('open');
-            settingsToggle.style.display = '';
-        });
-
-        // Close panel when clicking close button
-        const settingsClose = document.getElementById('settings-close');
-        settingsClose.addEventListener('click', () => {
-            settingsPanel.classList.remove('open');
-            settingsOverlay.classList.remove('open');
-            settingsToggle.style.display = '';
-        });
-
-        // Theme controls
-        const themeLightBtn = document.getElementById('theme-light');
-        const themeDarkBtn = document.getElementById('theme-dark');
-
-        function updateThemeButtons() {
-            if (themeManager.isDark) {
-                themeLightBtn.classList.remove('active');
-                themeDarkBtn.classList.add('active');
-            } else {
-                themeLightBtn.classList.add('active');
-                themeDarkBtn.classList.remove('active');
+            // Verify all elements exist before adding listeners
+            if (!settingsToggle || !settingsPanel || !settingsOverlay) {
+                console.error('Settings panel elements not found');
+                return;
             }
-        }
 
-        updateThemeButtons();
-
-        themeLightBtn.addEventListener('click', () => {
-            if (themeManager.isDark) {
-                themeManager.toggle();
-                updateThemeButtons();
-                screenReader.announce('Light mode enabled');
-                soundManager.play('click');
-            }
-        });
-
-        themeDarkBtn.addEventListener('click', () => {
-            if (!themeManager.isDark) {
-                themeManager.toggle();
-                updateThemeButtons();
-                screenReader.announce('Dark mode enabled');
-                soundManager.play('click');
-            }
-        });
-
-        // Font size controls
-        const fontDecreaseBtn = document.getElementById('font-decrease-btn');
-        const fontIncreaseBtn = document.getElementById('font-increase-btn');
-        const fontSizeDisplayPanel = document.getElementById('font-size-display-panel');
-
-        function updateFontDisplay() {
-            fontSizeDisplayPanel.textContent = `${fontSizeController.size}%`;
-        }
-
-        updateFontDisplay();
-
-        fontDecreaseBtn.addEventListener('click', () => {
-            fontSizeController.decrease();
-            updateFontDisplay();
-            screenReader.announce(`Font size decreased to ${fontSizeController.size}%`);
-            soundManager.play('click');
-        });
-
-        fontIncreaseBtn.addEventListener('click', () => {
-            fontSizeController.increase();
-            updateFontDisplay();
-            screenReader.announce(`Font size increased to ${fontSizeController.size}%`);
-            soundManager.play('click');
-        });
-
-        // Animation controls
-        const animationsOnBtn = document.getElementById('animations-on');
-        const animationsOffBtn = document.getElementById('animations-off');
-
-        function updateAnimationButtons() {
-            if (animationController.enabled) {
-                animationsOnBtn.classList.add('active');
-                animationsOffBtn.classList.remove('active');
-            } else {
-                animationsOnBtn.classList.remove('active');
-                animationsOffBtn.classList.add('active');
-            }
-        }
-
-        updateAnimationButtons();
-
-        animationsOnBtn.addEventListener('click', () => {
-            if (!animationController.enabled) {
-                animationController.toggle();
-                updateAnimationButtons();
-                screenReader.announce('Animations enabled');
-                soundManager.play('click');
-            }
-        });
-
-        animationsOffBtn.addEventListener('click', () => {
-            if (animationController.enabled) {
-                animationController.toggle();
-                updateAnimationButtons();
-                screenReader.announce('Animations disabled');
-                soundManager.play('click');
-            }
-        });
-
-        // Share button
-        document.getElementById('share-button-panel').addEventListener('click', async () => {
-            const success = await shareContent(
-                'Calendar Systems Explorer',
-                'Check out these interactive calendar explanations!',
-                window.location.href
-            );
-            if (success) {
-                soundManager.play('success');
-            }
-        });
-
-        // Search functionality
-        const searchInput = document.getElementById('calendar-search');
-        const calendarCards = document.querySelectorAll('.calendar-card');
-        const noResults = document.getElementById('no-results');
-        const calendarGrid = document.getElementById('calendar-grid');
-
-        searchInput.addEventListener('input', debounce((e) => {
-            const searchTerm = e.target.value.toLowerCase().trim();
-            let visibleCount = 0;
-
-            calendarCards.forEach(card => {
-                const keywords = card.dataset.keywords.toLowerCase();
-                const title = card.querySelector('h2').textContent.toLowerCase();
-                const description = card.querySelector('p').textContent.toLowerCase();
-
-                const matches = searchTerm === '' ||
-                               keywords.includes(searchTerm) ||
-                               title.includes(searchTerm) ||
-                               description.includes(searchTerm);
-
-                if (matches) {
-                    card.style.display = '';
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
-                }
+            // Toggle panel
+            settingsToggle.addEventListener('click', () => {
+                settingsPanel.classList.toggle('open');
+                settingsOverlay.classList.toggle('open');
+                settingsToggle.style.display = 'none';
+                if (window.soundManager) soundManager.play('click');
             });
 
-            if (visibleCount === 0) {
-                calendarGrid.style.display = 'none';
-                noResults.classList.remove('hidden');
-                screenReader.announce('No calendars found matching your search');
-            } else {
-                calendarGrid.style.display = '';
-                noResults.classList.add('hidden');
-                screenReader.announce(`${visibleCount} calendar${visibleCount !== 1 ? 's' : ''} found`);
-            }
-        }, 300));
+            // Close panel when clicking overlay
+            settingsOverlay.addEventListener('click', () => {
+                settingsPanel.classList.remove('open');
+                settingsOverlay.classList.remove('open');
+                settingsToggle.style.display = '';
+            });
 
-        // Initialize sound manager
-        soundManager.init();
+            // Close panel when clicking close button
+            const settingsClose = document.getElementById('settings-close');
+            if (settingsClose) {
+                settingsClose.addEventListener('click', () => {
+                    settingsPanel.classList.remove('open');
+                    settingsOverlay.classList.remove('open');
+                    settingsToggle.style.display = '';
+                });
+            }
+
+            // Verify theme manager exists
+            if (!window.themeManager) {
+                console.error('ThemeManager not initialized');
+                return;
+            }
+
+            // Theme controls
+            const themeLightBtn = document.getElementById('theme-light');
+            const themeDarkBtn = document.getElementById('theme-dark');
+
+            function updateThemeButtons() {
+                if (themeManager.isDark) {
+                    if (themeLightBtn) themeLightBtn.classList.remove('active');
+                    if (themeDarkBtn) themeDarkBtn.classList.add('active');
+                } else {
+                    if (themeLightBtn) themeLightBtn.classList.add('active');
+                    if (themeDarkBtn) themeDarkBtn.classList.remove('active');
+                }
+            }
+
+            if (themeLightBtn && themeDarkBtn) {
+                updateThemeButtons();
+
+                themeLightBtn.addEventListener('click', () => {
+                    if (themeManager.isDark) {
+                        themeManager.toggle();
+                        updateThemeButtons();
+                        if (window.screenReader) screenReader.announce('Light mode enabled');
+                        if (window.soundManager) soundManager.play('click');
+                    }
+                });
+
+                themeDarkBtn.addEventListener('click', () => {
+                    if (!themeManager.isDark) {
+                        themeManager.toggle();
+                        updateThemeButtons();
+                        if (window.screenReader) screenReader.announce('Dark mode enabled');
+                        if (window.soundManager) soundManager.play('click');
+                    }
+                });
+            }
+
+            // Font size controls
+            const fontDecreaseBtn = document.getElementById('font-decrease-btn');
+            const fontIncreaseBtn = document.getElementById('font-increase-btn');
+            const fontSizeDisplayPanel = document.getElementById('font-size-display-panel');
+
+            function updateFontDisplay() {
+                if (window.fontSizeController && fontSizeDisplayPanel) {
+                    fontSizeDisplayPanel.textContent = `${fontSizeController.size}%`;
+                }
+            }
+
+            if (window.fontSizeController && fontDecreaseBtn && fontIncreaseBtn) {
+                updateFontDisplay();
+
+                fontDecreaseBtn.addEventListener('click', () => {
+                    fontSizeController.decrease();
+                    updateFontDisplay();
+                    if (window.screenReader) screenReader.announce(`Font size decreased to ${fontSizeController.size}%`);
+                    if (window.soundManager) soundManager.play('click');
+                });
+
+                fontIncreaseBtn.addEventListener('click', () => {
+                    fontSizeController.increase();
+                    updateFontDisplay();
+                    if (window.screenReader) screenReader.announce(`Font size increased to ${fontSizeController.size}%`);
+                    if (window.soundManager) soundManager.play('click');
+                });
+            }
+
+            // Animation controls
+            const animationsOnBtn = document.getElementById('animations-on');
+            const animationsOffBtn = document.getElementById('animations-off');
+
+            function updateAnimationButtons() {
+                if (window.animationController) {
+                    if (animationController.enabled) {
+                        if (animationsOnBtn) animationsOnBtn.classList.add('active');
+                        if (animationsOffBtn) animationsOffBtn.classList.remove('active');
+                    } else {
+                        if (animationsOnBtn) animationsOnBtn.classList.remove('active');
+                        if (animationsOffBtn) animationsOffBtn.classList.add('active');
+                    }
+                }
+            }
+
+            if (window.animationController && animationsOnBtn && animationsOffBtn) {
+                updateAnimationButtons();
+
+                animationsOnBtn.addEventListener('click', () => {
+                    if (!animationController.enabled) {
+                        animationController.toggle();
+                        updateAnimationButtons();
+                        if (window.screenReader) screenReader.announce('Animations enabled');
+                        if (window.soundManager) soundManager.play('click');
+                    }
+                });
+
+                animationsOffBtn.addEventListener('click', () => {
+                    if (animationController.enabled) {
+                        animationController.toggle();
+                        updateAnimationButtons();
+                        if (window.screenReader) screenReader.announce('Animations disabled');
+                        if (window.soundManager) soundManager.play('click');
+                    }
+                });
+            }
+
+            // Share button
+            const shareButtonPanel = document.getElementById('share-button-panel');
+            if (shareButtonPanel && window.shareContent) {
+                shareButtonPanel.addEventListener('click', async () => {
+                    const success = await shareContent(
+                        'Calendar Systems Explorer',
+                        'Check out these interactive calendar explanations!',
+                        window.location.href
+                    );
+                    if (success && window.soundManager) {
+                        soundManager.play('success');
+                    }
+                });
+            }
+
+            // Search functionality
+            const searchInput = document.getElementById('calendar-search');
+            const calendarCards = document.querySelectorAll('.calendar-card');
+            const noResults = document.getElementById('no-results');
+            const calendarGrid = document.getElementById('calendar-grid');
+
+            if (searchInput && window.debounce) {
+                searchInput.addEventListener('input', debounce((e) => {
+                    const searchTerm = e.target.value.toLowerCase().trim();
+                    let visibleCount = 0;
+
+                    calendarCards.forEach(card => {
+                        const keywords = card.dataset.keywords.toLowerCase();
+                        const title = card.querySelector('h2').textContent.toLowerCase();
+                        const description = card.querySelector('p').textContent.toLowerCase();
+
+                        const matches = searchTerm === '' ||
+                                       keywords.includes(searchTerm) ||
+                                       title.includes(searchTerm) ||
+                                       description.includes(searchTerm);
+
+                        if (matches) {
+                            card.style.display = '';
+                            visibleCount++;
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+
+                    if (visibleCount === 0) {
+                        if (calendarGrid) calendarGrid.style.display = 'none';
+                        if (noResults) noResults.classList.remove('hidden');
+                        if (window.screenReader) screenReader.announce('No calendars found matching your search');
+                    } else {
+                        if (calendarGrid) calendarGrid.style.display = '';
+                        if (noResults) noResults.classList.add('hidden');
+                        if (window.screenReader) screenReader.announce(`${visibleCount} calendar${visibleCount !== 1 ? 's' : ''} found`);
+                    }
+                }, 300));
+            }
+
+            // Initialize sound manager
+            if (window.soundManager) {
+                soundManager.init();
+            }
+
+            console.log('✓ Settings panel initialized');
+        });
     </script>
 </body>
 </html>
