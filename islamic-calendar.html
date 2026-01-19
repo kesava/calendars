@@ -3,38 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Islamic Calendar</title>
+
+    <!-- Primary Meta Tags -->
+    <title>The Islamic Calendar - Interactive Educational Visualization</title>
+    <meta name="title" content="The Islamic Calendar - Interactive Educational Visualization">
+    <meta name="description" content="Learn about the Islamic (Hijri) calendar system, lunar months, seasonal drift, and the 30-year leap cycle through interactive animations.">
+    <meta name="keywords" content="islamic calendar, hijri calendar, lunar calendar, ramadan, islamic months, seasonal drift, leap year cycle, interactive visualization">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://kesava.github.io/calendars/islamic-calendar.html">
+    <meta property="og:title" content="The Islamic Calendar">
+    <meta property="og:description" content="Interactive visualization of the Islamic calendar system and seasonal drift">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#1F2937">
+
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="shared-styles.css" as="style">
+    <link rel="preload" href="shared-utils.js" as="script">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="shared-styles.css">
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .float { animation: float 3s ease-in-out infinite; }
-        .bounce { animation: bounce 1s ease-in-out infinite; }
-        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
-
         body {
             overflow-x: hidden;
         }
     </style>
 </head>
 <body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="Breadcrumb" class="fixed top-4 left-4 z-50 no-print">
+        <ol class="flex items-center gap-2 bg-white dark:bg-gray-800 rounded-full px-4 py-2 shadow-lg text-sm">
+            <li><a href="index.html" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">🏠 Home</a></li>
+            <li class="text-gray-400" aria-hidden="true">/</li>
+            <li aria-current="page" class="text-gray-900 dark:text-white font-semibold">Islamic Calendar</li>
+        </ol>
+    </nav>
+
+    <!-- Theme Toggle -->
+    <button
+        id="theme-toggle"
+        class="fixed top-4 right-4 z-50 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all no-print"
+        aria-label="Toggle dark mode"
+    >
+        <span class="text-2xl" aria-hidden="true">🌙</span>
+    </button>
+
+    <!-- Font Size Controls -->
+    <div class="fixed bottom-4 left-4 z-50 flex gap-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg no-print">
+        <button
+            id="font-decrease"
+            class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center text-sm font-semibold transition-colors"
+            aria-label="Decrease font size"
+        >
+            A-
+        </button>
+        <span id="font-size-display" class="px-2 flex items-center text-sm font-semibold">100%</span>
+        <button
+            id="font-increase"
+            class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center text-sm font-semibold transition-colors"
+            aria-label="Increase font size"
+        >
+            A+
+        </button>
+    </div>
+
+    <!-- Animation Control -->
+    <button
+        id="animation-toggle"
+        class="fixed top-20 right-4 z-50 px-4 py-2 rounded-full bg-white dark:bg-gray-800 shadow-lg text-sm font-semibold no-print"
+        aria-label="Toggle animations"
+    >
+        <span id="animation-status">▶️ Animations On</span>
+    </button>
+
+    <!-- Share Button -->
+    <button
+        id="share-button"
+        class="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-blue-500 text-white shadow-lg hover:shadow-xl transition-all no-print"
+        aria-label="Share this page"
+    >
+        <span class="text-xl" aria-hidden="true">📤</span>
+    </button>
+
     <div id="root"></div>
 
     <script type="text/babel">
@@ -75,29 +134,29 @@
                 <div className="text-center">
                     <div className="relative w-full max-w-md mx-auto mb-6">
                         {/* Year counter */}
-                        <div className="bg-gray-900 text-white rounded-2xl p-6 mb-4">
+                        <div className="bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 rounded-2xl p-6 mb-4">
                             <div className="text-5xl font-semibold mb-2">{years}</div>
                             <div className="text-base">year{years !== 1 ? 's' : ''} passed</div>
                         </div>
 
                         {/* Season indicator */}
-                        <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 mb-4">
+                        <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 mb-4">
                             <div className="text-6xl mb-3">{seasonEmojis[currentSeason]}</div>
-                            <div className="text-lg font-semibold text-gray-900">
+                            <div className="text-lg font-semibold text-gray-900 dark:text-white">
                                 Ramadan is now in {currentSeason}
                             </div>
-                            <div className="text-sm text-gray-600 mt-2">
+                            <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">
                                 Started in {seasonEmojis[seasons[0]]} Winter
                             </div>
                         </div>
 
                         {/* Drift display */}
-                        <div className="bg-white rounded-xl p-4 border border-gray-200">
-                            <div className="text-sm text-gray-600 mb-2">Calendar has drifted:</div>
-                            <div className="text-3xl font-semibold text-gray-900">
+                        <div className="bg-white dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                            <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">Calendar has drifted:</div>
+                            <div className="text-3xl font-semibold text-gray-900 dark:text-white">
                                 {driftMonths} months, {remainingDays} days
                             </div>
-                            <div className="text-xs text-gray-500 mt-2">
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                                 ({driftDays} total days backward through the year)
                             </div>
                         </div>
@@ -107,7 +166,7 @@
                     <div className="flex items-center gap-2 mb-4 justify-center">
                         <button
                             onClick={() => setYears(Math.max(1, years - 1))}
-                            className="px-4 py-2 bg-gray-700 text-white rounded-full font-semibold hover:bg-gray-600"
+                            className="px-4 py-2 bg-gray-700 dark:bg-gray-600 text-white rounded-full font-semibold hover:bg-gray-600 dark:hover:bg-gray-500"
                         >
                             −1
                         </button>
@@ -121,7 +180,7 @@
                         />
                         <button
                             onClick={() => setYears(Math.min(33, years + 1))}
-                            className="px-4 py-2 bg-gray-700 text-white rounded-full font-semibold hover:bg-gray-600"
+                            className="px-4 py-2 bg-gray-700 dark:bg-gray-600 text-white rounded-full font-semibold hover:bg-gray-600 dark:hover:bg-gray-500"
                         >
                             +1
                         </button>
@@ -129,13 +188,13 @@
 
                     <button
                         onClick={() => { setIsPlaying(!isPlaying); if (years >= 33) setYears(1); }}
-                        className="px-6 py-2 bg-gray-200 text-gray-700 rounded-full text-sm hover:bg-gray-300 transition-colors"
+                        className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                     >
                         {isPlaying ? '⏸ Pause' : '▶ Play'}
                     </button>
 
                     {years >= 33 && (
-                        <div className="mt-4 bg-gray-900 text-white rounded-xl p-4">
+                        <div className="mt-4 bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 rounded-xl p-4">
                             <div className="text-lg font-semibold mb-2">🔄 Full Cycle Complete!</div>
                             <div className="text-sm opacity-90">
                                 After ~33 solar years, Ramadan returns to the same season
@@ -151,8 +210,10 @@
             const [currentYear, setCurrentYear] = useState(0);
             const [isPlaying, setIsPlaying] = useState(true);
 
-            // Years 2, 5, 7, 10, 13, 16, 18, 21, 24, 26, 29 have 355 days (leap years)
-            const leapYears = [1, 4, 6, 9, 12, 15, 17, 20, 23, 25, 28]; // 0-indexed
+            // In a 30-year cycle, 11 years have 355 days (leap years) and 19 years have 354 days
+            // Leap years: 2, 5, 7, 10, 13, 16, 18, 21, 24, 26, 29 (counting from 1)
+            // In the array below, these are represented as 0-indexed: [1, 4, 6, 9, 12, 15, 17, 20, 23, 25, 28]
+            const leapYears = [1, 4, 6, 9, 12, 15, 17, 20, 23, 25, 28]; // 0-indexed (year 1 in cycle = index 0)
 
             useEffect(() => {
                 if (!isPlaying) return;
@@ -179,11 +240,11 @@
                                         className={`aspect-square rounded-lg transition-all duration-300 flex items-center justify-center text-xs font-semibold ${
                                             isCurrent
                                                 ? isLeap
-                                                    ? 'bg-gray-900 text-white scale-110 shadow-lg'
-                                                    : 'bg-gray-700 text-white scale-110 shadow-lg'
+                                                    ? 'bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 scale-110 shadow-lg'
+                                                    : 'bg-gray-700 dark:bg-gray-400 text-white dark:text-gray-900 scale-110 shadow-lg'
                                                 : isLeap
-                                                    ? 'bg-gray-400 text-white'
-                                                    : 'bg-gray-200 text-gray-600'
+                                                    ? 'bg-gray-400 dark:bg-gray-500 text-white'
+                                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
                                         }`}
                                     >
                                         {idx + 1}
@@ -195,27 +256,27 @@
                         {/* Legend */}
                         <div className="flex items-center justify-center gap-4 text-sm mb-4">
                             <div className="flex items-center gap-2">
-                                <div className="w-4 h-4 bg-gray-900 rounded"></div>
-                                <span className="text-gray-600">355 days (Leap)</span>
+                                <div className="w-4 h-4 bg-gray-900 dark:bg-gray-200 rounded"></div>
+                                <span className="text-gray-600 dark:text-gray-400">355 days (Leap)</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="w-4 h-4 bg-gray-200 rounded"></div>
-                                <span className="text-gray-600">354 days (Regular)</span>
+                                <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                                <span className="text-gray-600 dark:text-gray-400">354 days (Regular)</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-3">
-                        <div className="text-sm text-gray-600 mb-2">Year {currentYear + 1} of 30:</div>
-                        <div className="text-4xl font-semibold mb-2 text-gray-900">
+                    <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 mb-3">
+                        <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">Year {currentYear + 1} of 30:</div>
+                        <div className="text-4xl font-semibold mb-2 text-gray-900 dark:text-white">
                             {isLeapYear ? '355' : '354'} days
                         </div>
-                        <div className="text-base text-gray-700">
+                        <div className="text-base text-gray-700 dark:text-gray-300">
                             {isLeapYear ? '🌙 Dhul Hijjah has 30 days' : '🌙 Dhul Hijjah has 29 days'}
                         </div>
                     </div>
 
-                    <div className="bg-gray-900 text-white p-4 rounded-xl mb-3">
+                    <div className="bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 p-4 rounded-xl mb-3">
                         <div className="text-sm mb-2">📊 The Pattern:</div>
                         <div className="text-base">11 leap years in every 30-year cycle</div>
                         <div className="text-xs mt-2 opacity-75">Years 2, 5, 7, 10, 13, 16, 18, 21, 24, 26, and 29</div>
@@ -223,7 +284,7 @@
 
                     <button
                         onClick={() => setIsPlaying(!isPlaying)}
-                        className="px-6 py-2 bg-gray-200 text-gray-700 rounded-full text-sm hover:bg-gray-300 transition-colors"
+                        className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                     >
                         {isPlaying ? '⏸ Pause' : '▶ Play'}
                     </button>
@@ -253,21 +314,21 @@
                     {months.map((month, idx) => (
                         <div
                             key={idx}
-                            className="bg-white rounded-lg p-3 border border-gray-200 flex items-center justify-between"
+                            className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700 flex items-center justify-between"
                         >
                             <div className="flex items-center gap-3">
-                                <div className="text-xl font-semibold text-gray-900 w-6">{idx + 1}</div>
+                                <div className="text-xl font-semibold text-gray-900 dark:text-white w-6">{idx + 1}</div>
                                 <div>
-                                    <div className="font-semibold text-gray-900">{month.name}</div>
+                                    <div className="font-semibold text-gray-900 dark:text-white">{month.name}</div>
                                     {month.special && (
-                                        <div className="text-xs text-gray-500">{month.special}</div>
+                                        <div className="text-xs text-gray-500 dark:text-gray-400">{month.special}</div>
                                     )}
                                 </div>
                             </div>
-                            <div className="text-sm text-gray-600">{month.days} days</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">{month.days} days</div>
                         </div>
                     ))}
-                    <div className="bg-gray-900 text-white rounded-lg p-3 text-sm">
+                    <div className="bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 rounded-lg p-3 text-sm">
                         <span className="font-semibold">*</span> In leap years, Dhu al-Hijjah has 30 days instead of 29
                     </div>
                 </div>
@@ -285,19 +346,21 @@
             ];
 
             return (
-                <div className="min-h-screen bg-gray-50 p-4 md:p-8 overflow-x-hidden">
+                <main id="main-content" className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8 overflow-x-hidden transition-colors" role="main">
                     <div className="max-w-4xl mx-auto w-full">
                         {/* Progress Dots */}
-                        <div className="flex justify-center gap-3 mb-8">
+                        <div className="flex justify-center gap-3 mb-8" role="navigation" aria-label="Progress through screens">
                             {screens.map((s, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => setScreen(idx)}
+                                    aria-label={`${s.title}${idx === screen ? ' (current)' : ''}`}
+                                    aria-current={idx === screen ? 'step' : undefined}
                                     className={`transition-all duration-300 ${
                                         idx === screen
                                             ? 'w-12 h-12 rounded-full shadow-lg scale-110'
                                             : 'w-10 h-10 rounded-full shadow opacity-60 hover:opacity-100'
-                                    } ${idx === screen ? 'bg-gray-800' : 'bg-gray-400'} flex items-center justify-center text-2xl`}
+                                    } ${idx === screen ? 'bg-gray-800 dark:bg-gray-200' : 'bg-gray-400 dark:bg-gray-600'} flex items-center justify-center text-2xl`}
                                 >
                                     {s.icon}
                                 </button>
@@ -307,45 +370,45 @@
                         {/* Screen 0: Welcome */}
                         {screen === 0 && (
                             <div className="fade-in">
-                                <div className="bg-white rounded-3xl shadow-lg p-6 md:p-12 text-center border border-gray-200">
+                                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg p-6 md:p-12 text-center border border-gray-200 dark:border-gray-700 transition-colors">
                                     <div className="text-6xl md:text-8xl mb-6 float">☪️</div>
-                                    <h1 className="text-3xl md:text-6xl font-semibold text-gray-900 mb-6">
+                                    <h1 className="text-3xl md:text-6xl font-semibold text-gray-900 dark:text-white mb-6">
                                         The Islamic Calendar
                                     </h1>
-                                    <p className="text-lg text-gray-600 mb-8">
+                                    <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
                                         Also known as the Hijri Calendar
                                     </p>
 
                                     <div className="space-y-6 mt-8">
-                                        <div className="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-200">
-                                            <p className="text-xl md:text-2xl font-semibold mb-4 text-gray-800">
+                                        <div className="bg-gray-50 dark:bg-gray-900 p-6 md:p-8 rounded-2xl border border-gray-200 dark:border-gray-700">
+                                            <p className="text-xl md:text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
                                                 A Purely Lunar Calendar
                                             </p>
-                                            <div className="bg-white p-4 rounded-xl border border-gray-200 max-w-md mx-auto">
+                                            <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
                                                 <div className="text-4xl mb-2">🌙</div>
-                                                <div className="font-semibold text-lg text-gray-800">Only Follows the Moon</div>
-                                                <div className="text-sm text-gray-600">Does NOT sync with the solar year</div>
-                                                <div className="text-2xl font-semibold text-gray-700 mt-2">~354 days/year</div>
+                                                <div className="font-semibold text-lg text-gray-800 dark:text-gray-200">Only Follows the Moon</div>
+                                                <div className="text-sm text-gray-600 dark:text-gray-400">Does NOT sync with the solar year</div>
+                                                <div className="text-2xl font-semibold text-gray-700 dark:text-gray-300 mt-2">~354 days/year</div>
                                             </div>
                                         </div>
 
-                                        <div className="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-200">
+                                        <div className="bg-gray-50 dark:bg-gray-900 p-6 md:p-8 rounded-2xl border border-gray-200 dark:border-gray-700">
                                             <div className="text-5xl mb-4 bounce">🔄</div>
-                                            <p className="text-xl md:text-2xl font-semibold text-gray-800">
+                                            <p className="text-xl md:text-2xl font-semibold text-gray-800 dark:text-gray-200">
                                                 A Different Approach
                                             </p>
-                                            <p className="text-base md:text-lg text-gray-700 mt-3">
+                                            <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 mt-3">
                                                 Unlike Hindu and Hebrew calendars,<br/>
-                                                the Islamic calendar <span className="text-gray-900 font-medium">does NOT add extra months</span>
+                                                the Islamic calendar <span className="text-gray-900 dark:text-white font-medium">does NOT add extra months</span>
                                                 <br/>
                                                 <br/>
-                                                Instead, it <span className="text-gray-900 font-medium">drifts through all seasons</span>
+                                                Instead, it <span className="text-gray-900 dark:text-white font-medium">drifts through all seasons</span>
                                             </p>
                                         </div>
 
                                         <button
                                             onClick={() => setScreen(1)}
-                                            className="px-8 md:px-12 py-4 md:py-5 rounded-full text-xl md:text-2xl font-semibold bg-gray-900 text-white shadow-lg hover:bg-gray-800 hover:scale-105 transition-all transform"
+                                            className="px-8 md:px-12 py-4 md:py-5 rounded-full text-xl md:text-2xl font-semibold bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 shadow-lg hover:bg-gray-800 dark:hover:bg-gray-300 hover:scale-105 transition-all transform"
                                         >
                                             Learn More →
                                         </button>
@@ -357,32 +420,32 @@
                         {/* Screen 1: The System */}
                         {screen === 1 && (
                             <div className="fade-in">
-                                <div className="bg-white rounded-3xl shadow-lg p-4 md:p-8 border border-gray-200">
-                                    <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-6 text-center">
+                                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg p-4 md:p-8 border border-gray-200 dark:border-gray-700">
+                                    <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-6 text-center">
                                         🌙 The Islamic Calendar System
                                     </h2>
 
-                                    <div className="bg-gray-50 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200">
-                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                    <div className="bg-gray-50 dark:bg-gray-900 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200 dark:border-gray-700">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white mb-4 text-center">
                                             12 Lunar Months
                                         </h3>
                                         <IslamicMonths />
                                     </div>
 
-                                    <div className="bg-gray-50 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200">
-                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                    <div className="bg-gray-50 dark:bg-gray-900 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200 dark:border-gray-700">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white mb-4 text-center">
                                             The 30-Year Leap Day Cycle
                                         </h3>
                                         <LeapDayCycleAnimation />
 
-                                        <div className="mt-6 bg-white rounded-xl p-4 md:p-6 border border-gray-200">
-                                            <p className="text-sm md:text-base text-gray-600 mb-3">
-                                                Most years have <span className="text-gray-900 font-medium">354 days</span>,
-                                                but 11 years in each 30-year cycle have <span className="text-gray-900 font-medium">355 days</span>
+                                        <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+                                            <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-3">
+                                                Most years have <span className="text-gray-900 dark:text-white font-medium">354 days</span>,
+                                                but 11 years in each 30-year cycle have <span className="text-gray-900 dark:text-white font-medium">355 days</span>
                                                 (one extra day added to Dhu al-Hijjah).
                                             </p>
-                                            <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm text-gray-600">
-                                                <p className="font-medium text-gray-800 mb-1">Important Note:</p>
+                                            <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400">
+                                                <p className="font-medium text-gray-800 dark:text-gray-200 mb-1">Important Note:</p>
                                                 <p>Unlike Hindu/Hebrew calendars which add entire <span className="font-medium">months</span>,
                                                 the Islamic calendar only adds individual <span className="font-medium">days</span> - never a 13th month!</p>
                                             </div>
@@ -392,13 +455,13 @@
                                     <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                                         <button
                                             onClick={() => setScreen(0)}
-                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 text-gray-700 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300"
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300 dark:hover:bg-gray-600"
                                         >
                                             ← Back
                                         </button>
                                         <button
                                             onClick={() => setScreen(2)}
-                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 hover:scale-105 transition-all"
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 dark:hover:bg-gray-300 hover:scale-105 transition-all"
                                         >
                                             See Seasonal Drift →
                                         </button>
@@ -410,45 +473,45 @@
                         {/* Screen 2: Seasonal Drift */}
                         {screen === 2 && (
                             <div className="fade-in">
-                                <div className="bg-white rounded-3xl shadow-lg p-4 md:p-8 border border-gray-200">
-                                    <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-6 text-center">
+                                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg p-4 md:p-8 border border-gray-200 dark:border-gray-700">
+                                    <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-6 text-center">
                                         🔄 Drifting Through the Seasons
                                     </h2>
 
-                                    <div className="bg-gray-50 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200">
-                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                    <div className="bg-gray-50 dark:bg-gray-900 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200 dark:border-gray-700">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white mb-4 text-center">
                                             Watch Ramadan Move Through the Year
                                         </h3>
                                         <SeasonalDriftAnimation />
                                     </div>
 
-                                    <div className="bg-gray-50 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200">
-                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                    <div className="bg-gray-50 dark:bg-gray-900 p-4 md:p-8 rounded-2xl mb-6 border border-gray-200 dark:border-gray-700">
+                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white mb-4 text-center">
                                             Why Does This Happen?
                                         </h3>
 
                                         <div className="space-y-4">
-                                            <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200">
-                                                <p className="text-sm md:text-base text-gray-600 mb-3">
-                                                    The Islamic year is <span className="text-gray-900 font-medium">~11 days shorter</span> than the solar year:
+                                            <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+                                                <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-3">
+                                                    The Islamic year is <span className="text-gray-900 dark:text-white font-medium">~11 days shorter</span> than the solar year:
                                                 </p>
-                                                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-2 text-sm text-gray-600">
+                                                <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700 space-y-2 text-sm text-gray-600 dark:text-gray-400">
                                                     <p>• Islamic year: 354 or 355 days</p>
                                                     <p>• Solar year: ~365.25 days</p>
-                                                    <p>• <span className="text-gray-900 font-medium">Difference: ~11 days per year</span></p>
+                                                    <p>• <span className="text-gray-900 dark:text-white font-medium">Difference: ~11 days per year</span></p>
                                                 </div>
                                             </div>
 
-                                            <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200">
-                                                <p className="font-semibold text-gray-900 mb-3">🔄 The Complete Cycle:</p>
-                                                <div className="space-y-2 text-sm text-gray-600">
+                                            <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+                                                <p className="font-semibold text-gray-900 dark:text-white mb-3">🔄 The Complete Cycle:</p>
+                                                <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                                                     <p>• Every year, Islamic months start ~11 days earlier in the solar calendar</p>
                                                     <p>• After ~33 years, they complete a full cycle through all seasons</p>
                                                     <p>• This means Ramadan experiences all seasons: summer, fall, winter, spring</p>
                                                 </div>
                                             </div>
 
-                                            <div className="bg-gray-900 text-white rounded-xl p-4 md:p-6">
+                                            <div className="bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 rounded-xl p-4 md:p-6">
                                                 <p className="text-center font-semibold mb-2">
                                                     🌍 A Unique Feature
                                                 </p>
@@ -463,13 +526,13 @@
                                     <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                                         <button
                                             onClick={() => setScreen(1)}
-                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 text-gray-700 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300"
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300 dark:hover:bg-gray-600"
                                         >
                                             ← Back
                                         </button>
                                         <button
                                             onClick={() => setScreen(3)}
-                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 hover:scale-105 transition-all"
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 dark:hover:bg-gray-300 hover:scale-105 transition-all"
                                         >
                                             Compare Calendars →
                                         </button>
@@ -481,54 +544,54 @@
                         {/* Screen 3: Comparison */}
                         {screen === 3 && (
                             <div className="fade-in">
-                                <div className="bg-white rounded-3xl shadow-lg p-4 md:p-8 border border-gray-200">
-                                    <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-6 text-center">
+                                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg p-4 md:p-8 border border-gray-200 dark:border-gray-700">
+                                    <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-6 text-center">
                                         ⚖️ Three Different Approaches
                                     </h2>
 
                                     <div className="space-y-6">
-                                        <div className="bg-gray-50 p-4 md:p-6 rounded-2xl border border-gray-200">
-                                            <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                        <div className="bg-gray-50 dark:bg-gray-900 p-4 md:p-6 rounded-2xl border border-gray-200 dark:border-gray-700">
+                                            <h3 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white mb-4 text-center">
                                                 The Same Problem, Different Solutions
                                             </h3>
 
                                             <div className="grid grid-cols-1 gap-4">
-                                                <div className="bg-white rounded-xl p-4 border-l-4 border-gray-600">
+                                                <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border-l-4 border-gray-600 dark:border-gray-400">
                                                     <div className="text-3xl mb-2">☪️</div>
-                                                    <p className="font-semibold text-gray-900 mb-2">Islamic Calendar</p>
-                                                    <div className="space-y-1 text-sm text-gray-600">
-                                                        <p>• <span className="font-medium text-gray-800">Purely Lunar:</span> Only follows the Moon</p>
-                                                        <p>• <span className="font-medium text-gray-800">No leap months:</span> Only adds leap days</p>
-                                                        <p>• <span className="font-medium text-gray-800">Drifts:</span> Cycles through all seasons every ~33 years</p>
-                                                        <p>• <span className="font-medium text-gray-800">30-year cycle:</span> 11 years have 355 days</p>
+                                                    <p className="font-semibold text-gray-900 dark:text-white mb-2">Islamic Calendar</p>
+                                                    <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                                                        <p>• <span className="font-medium text-gray-800 dark:text-gray-200">Purely Lunar:</span> Only follows the Moon</p>
+                                                        <p>• <span className="font-medium text-gray-800 dark:text-gray-200">No leap months:</span> Only adds leap days</p>
+                                                        <p>• <span className="font-medium text-gray-800 dark:text-gray-200">Drifts:</span> Cycles through all seasons every ~33 years</p>
+                                                        <p>• <span className="font-medium text-gray-800 dark:text-gray-200">30-year cycle:</span> 11 years have 355 days</p>
                                                     </div>
                                                 </div>
 
-                                                <div className="bg-white rounded-xl p-4 border-l-4 border-gray-500">
+                                                <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border-l-4 border-gray-500 dark:border-gray-400">
                                                     <div className="text-3xl mb-2">🕎</div>
-                                                    <p className="font-semibold text-gray-900 mb-2">Hebrew Calendar</p>
-                                                    <div className="space-y-1 text-sm text-gray-600">
-                                                        <p>• <span className="font-medium text-gray-800">Lunisolar:</span> Syncs Moon with Sun</p>
-                                                        <p>• <span className="font-medium text-gray-800">Adds months:</span> 13th month (Adar II) in leap years</p>
-                                                        <p>• <span className="font-medium text-gray-800">Fixed pattern:</span> Same 19-year cycle repeats</p>
-                                                        <p>• <span className="font-medium text-gray-800">Pre-calculated:</span> Known centuries ahead</p>
+                                                    <p className="font-semibold text-gray-900 dark:text-white mb-2">Hebrew Calendar</p>
+                                                    <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                                                        <p>• <span className="font-medium text-gray-800 dark:text-gray-200">Lunisolar:</span> Syncs Moon with Sun</p>
+                                                        <p>• <span className="font-medium text-gray-800 dark:text-gray-200">Adds months:</span> 13th month (Adar II) in leap years</p>
+                                                        <p>• <span className="font-medium text-gray-800 dark:text-gray-200">Fixed pattern:</span> Same 19-year cycle repeats</p>
+                                                        <p>• <span className="font-medium text-gray-800 dark:text-gray-200">Pre-calculated:</span> Known centuries ahead</p>
                                                     </div>
                                                 </div>
 
-                                                <div className="bg-white rounded-xl p-4 border-l-4 border-gray-500">
+                                                <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border-l-4 border-gray-500 dark:border-gray-400">
                                                     <div className="text-3xl mb-2">🕉️</div>
-                                                    <p className="font-semibold text-gray-900 mb-2">Hindu Calendar</p>
-                                                    <div className="space-y-1 text-sm text-gray-600">
-                                                        <p>• <span className="font-medium text-gray-800">Lunisolar:</span> Syncs Moon with Sun</p>
-                                                        <p>• <span className="font-medium text-gray-800">Adds/skips months:</span> Adhik Maas & Kshaya Masa</p>
-                                                        <p>• <span className="font-medium text-gray-800">Astronomical:</span> Based on Sankranti (Sun position)</p>
-                                                        <p>• <span className="font-medium text-gray-800">Variable:</span> Timing depends on observation</p>
+                                                    <p className="font-semibold text-gray-900 dark:text-white mb-2">Hindu Calendar</p>
+                                                    <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                                                        <p>• <span className="font-medium text-gray-800 dark:text-gray-200">Lunisolar:</span> Syncs Moon with Sun</p>
+                                                        <p>• <span className="font-medium text-gray-800 dark:text-gray-200">Adds/skips months:</span> Adhik Maas & Kshaya Masa</p>
+                                                        <p>• <span className="font-medium text-gray-800 dark:text-gray-200">Astronomical:</span> Based on Sankranti (Sun position)</p>
+                                                        <p>• <span className="font-medium text-gray-800 dark:text-gray-200">Variable:</span> Timing depends on observation</p>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="bg-gray-900 text-white rounded-xl p-4 md:p-6">
+                                        <div className="bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 rounded-xl p-4 md:p-6">
                                             <h3 className="text-xl md:text-2xl font-semibold mb-3 text-center">
                                                 🌍 Three Philosophies
                                             </h3>
@@ -539,22 +602,22 @@
                                             </div>
                                         </div>
 
-                                        <div className="bg-gray-50 p-4 md:p-6 rounded-2xl border border-gray-200">
-                                            <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4 text-center">
+                                        <div className="bg-gray-50 dark:bg-gray-900 p-4 md:p-6 rounded-2xl border border-gray-200 dark:border-gray-700">
+                                            <h3 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white mb-4 text-center">
                                                 ✨ Fun Facts
                                             </h3>
                                             <div className="space-y-3">
-                                                <div className="bg-white rounded-lg p-4 border border-gray-200">
-                                                    <p className="font-medium text-gray-800">📜 Year 1 Started</p>
-                                                    <p className="text-sm text-gray-600">622 CE - The year of Prophet Muhammad's migration (Hijra) from Mecca to Medina</p>
+                                                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                                                    <p className="font-medium text-gray-800 dark:text-gray-200">📜 Year 1 Started</p>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400">622 CE - The year of Prophet Muhammad's migration (Hijra) from Mecca to Medina</p>
                                                 </div>
-                                                <div className="bg-white rounded-lg p-4 border border-gray-200">
-                                                    <p className="font-medium text-gray-800">🌙 Moon Sighting</p>
-                                                    <p className="text-sm text-gray-600">Many Muslim communities still determine months by actual moon sighting, not just calculation</p>
+                                                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                                                    <p className="font-medium text-gray-800 dark:text-gray-200">🌙 Moon Sighting</p>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400">Many Muslim communities still determine months by actual moon sighting, not just calculation</p>
                                                 </div>
-                                                <div className="bg-white rounded-lg p-4 border border-gray-200">
-                                                    <p className="font-medium text-gray-800">📅 Year Numbering</p>
-                                                    <p className="text-sm text-gray-600">Islamic year 1446 = Gregorian 2024/2025. Islamic years are about 3% shorter!</p>
+                                                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                                                    <p className="font-medium text-gray-800 dark:text-gray-200">📅 Year Numbering</p>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400">Islamic year 1446 = Gregorian 2024/2025. Islamic years are about 3% shorter!</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -563,13 +626,13 @@
                                     <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                                         <button
                                             onClick={() => setScreen(2)}
-                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 text-gray-700 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300"
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full font-semibold text-lg md:text-xl hover:bg-gray-300 dark:hover:bg-gray-600"
                                         >
                                             ← Back
                                         </button>
                                         <button
                                             onClick={() => setScreen(0)}
-                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 hover:scale-105 transition-all"
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-900 dark:bg-gray-200 text-white dark:text-gray-900 rounded-full font-semibold text-lg md:text-xl shadow-lg hover:bg-gray-800 dark:hover:bg-gray-300 hover:scale-105 transition-all"
                                         >
                                             🔄 Start Over
                                         </button>
@@ -578,12 +641,95 @@
                             </div>
                         )}
                     </div>
-                </div>
+                </main>
             );
         }
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<IslamicCalendarApp />);
+    </script>
+
+    <!-- Shared Utilities -->
+    <script src="shared-utils.js"></script>
+    <script src="accessibility.js"></script>
+
+    <!-- UI Controls Initialization -->
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('span');
+
+        function updateThemeIcon() {
+            themeIcon.textContent = themeManager.isDark ? '☀️' : '🌙';
+            themeToggle.setAttribute('aria-label', `Switch to ${themeManager.isDark ? 'light' : 'dark'} mode`);
+        }
+
+        updateThemeIcon();
+
+        themeToggle.addEventListener('click', () => {
+            themeManager.toggle();
+            updateThemeIcon();
+            screenReader.announce(`${themeManager.isDark ? 'Dark' : 'Light'} mode enabled`);
+            soundManager.play('click');
+        });
+
+        // Font size controls
+        const fontDecrease = document.getElementById('font-decrease');
+        const fontIncrease = document.getElementById('font-increase');
+        const fontSizeDisplay = document.getElementById('font-size-display');
+
+        function updateFontDisplay() {
+            fontSizeDisplay.textContent = `${fontSizeController.size}%`;
+        }
+
+        updateFontDisplay();
+
+        fontDecrease.addEventListener('click', () => {
+            fontSizeController.decrease();
+            updateFontDisplay();
+            screenReader.announce(`Font size decreased to ${fontSizeController.size}%`);
+            soundManager.play('click');
+        });
+
+        fontIncrease.addEventListener('click', () => {
+            fontSizeController.increase();
+            updateFontDisplay();
+            screenReader.announce(`Font size increased to ${fontSizeController.size}%`);
+            soundManager.play('click');
+        });
+
+        // Animation toggle
+        const animationToggle = document.getElementById('animation-toggle');
+        const animationStatus = document.getElementById('animation-status');
+
+        function updateAnimationStatus() {
+            animationStatus.textContent = animationController.enabled ? '▶️ Animations On' : '⏸️ Animations Off';
+            animationToggle.setAttribute('aria-label', `Turn animations ${animationController.enabled ? 'off' : 'on'}`);
+        }
+
+        updateAnimationStatus();
+
+        animationToggle.addEventListener('click', () => {
+            animationController.toggle();
+            updateAnimationStatus();
+            screenReader.announce(`Animations ${animationController.enabled ? 'enabled' : 'disabled'}`);
+            soundManager.play('click');
+        });
+
+        // Share button
+        document.getElementById('share-button').addEventListener('click', async () => {
+            const success = await shareContent(
+                'The Islamic Calendar',
+                'Check out this interactive Islamic calendar explanation!',
+                window.location.href
+            );
+            if (success) {
+                soundManager.play('success');
+            }
+        });
+
+        // Initialize sound manager
+        soundManager.init();
     </script>
 </body>
 </html>

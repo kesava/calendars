@@ -3,7 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Why Do We Need Leap Years? (For Kids)</title>
+
+    <!-- Primary Meta Tags -->
+    <title>Leap Years Explained - Interactive Educational Visualization</title>
+    <meta name="title" content="Leap Years Explained - Interactive Educational Visualization">
+    <meta name="description" content="Interactive educational visualization explaining why we need leap years and how seasons would drift without them. Perfect for children!">
+    <meta name="keywords" content="leap year, calendar, gregorian, astronomy, education, interactive, visualization, seasons, earth orbit">
+    <meta name="author" content="Calendar Systems Explorer">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://kesava.github.io/calendars/leap-year.html">
+    <meta property="og:title" content="Leap Years Explained">
+    <meta property="og:description" content="Interactive educational visualization showing why we need leap years">
+    <meta property="og:image" content="https://kesava.github.io/calendars/preview.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://kesava.github.io/calendars/leap-year.html">
+    <meta property="twitter:title" content="Leap Years Explained">
+    <meta property="twitter:description" content="Interactive educational visualization showing why we need leap years">
+    <meta property="twitter:image" content="https://kesava.github.io/calendars/preview.png">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#8B5CF6">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://kesava.github.io/calendars/leap-year.html">
+
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="shared-styles.css" as="style">
+    <link rel="preload" href="shared-utils.js" as="script">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="shared-styles.css">
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -67,6 +100,9 @@
             padding: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
+        .dark .speech-bubble {
+            background: #1f2937;
+        }
         .speech-bubble:after {
             content: '';
             position: absolute;
@@ -78,6 +114,9 @@
             border-top-color: white;
             border-bottom: 0;
             margin-left: -20px;
+        }
+        .dark .speech-bubble:after {
+            border-top-color: #1f2937;
         }
 
         #earth-canvas {
@@ -103,7 +142,67 @@
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Breadcrumb -->
+    <nav aria-label="Breadcrumb" class="fixed top-4 left-4 z-50 text-sm no-print">
+        <ol class="flex items-center gap-2 bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-lg">
+            <li><a href="index.html" class="text-purple-600 dark:text-purple-400 hover:underline">Home</a></li>
+            <li aria-hidden="true">/</li>
+            <li aria-current="page" class="text-gray-900 dark:text-white font-semibold">Leap Years</li>
+        </ol>
+    </nav>
+
+    <!-- Theme Toggle -->
+    <button
+        id="theme-toggle"
+        class="fixed top-4 right-4 z-50 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all no-print"
+        aria-label="Toggle dark mode"
+    >
+        <span class="text-2xl" aria-hidden="true">🌙</span>
+    </button>
+
+    <!-- Font Size Controls -->
+    <div class="fixed bottom-4 left-4 z-50 flex gap-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg no-print">
+        <button
+            id="font-decrease"
+            class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center text-sm font-semibold transition-colors"
+            aria-label="Decrease font size"
+        >
+            A-
+        </button>
+        <span id="font-size-display" class="px-2 flex items-center text-sm font-semibold">100%</span>
+        <button
+            id="font-increase"
+            class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center text-sm font-semibold transition-colors"
+            aria-label="Increase font size"
+        >
+            A+
+        </button>
+    </div>
+
+    <!-- Animation Control -->
+    <button
+        id="animation-toggle"
+        class="fixed top-20 right-4 z-50 px-4 py-2 rounded-full bg-white dark:bg-gray-800 shadow-lg text-sm font-semibold no-print"
+        aria-label="Toggle animations"
+    >
+        <span id="animation-status">▶️ Animations On</span>
+    </button>
+
+    <!-- Share Button -->
+    <button
+        id="share-button"
+        class="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-blue-500 text-white shadow-lg hover:shadow-xl transition-all no-print"
+        aria-label="Share this page"
+    >
+        <span class="text-xl" aria-hidden="true">📤</span>
+    </button>
+
+    <main id="main-content" class="transition-colors duration-300">
+        <div id="root"></div>
+    </main>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
@@ -218,12 +317,12 @@
                     {/* Speech Bubble */}
                     {showBubble && message && (
                         <div className="speech-bubble mb-4 bubble-anim">
-                            <p className="text-gray-800 font-bold text-sm md:text-lg leading-relaxed">
+                            <p className="text-gray-800 dark:text-gray-200 font-bold text-sm md:text-lg leading-relaxed transition-colors">
                                 {message}
                             </p>
                             <button
                                 onClick={handleClick}
-                                className="mt-2 text-xs text-purple-600 hover:text-purple-800 font-bold"
+                                className="mt-2 text-xs text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 font-bold transition-colors"
                             >
                                 💬 Click me to hide/show
                             </button>
@@ -245,8 +344,8 @@
                         )}
 
                         {/* Name tag */}
-                        <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-lg border-2 border-purple-400">
-                            <p className="text-xs font-black text-purple-600">Leap</p>
+                        <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-800 px-3 py-1 rounded-full shadow-lg border-2 border-purple-400 dark:border-purple-500 transition-colors">
+                            <p className="text-xs font-black text-purple-600 dark:text-purple-400">Leap</p>
                         </div>
 
                         {/* Tooltip when no bubble */}
@@ -399,15 +498,15 @@
             const showWeeks = Math.min(weeks, maxWeeksToShow);
 
             return (
-                <div className="bg-gradient-to-r from-orange-50 to-red-50 p-4 md:p-6 rounded-2xl border-4 border-orange-300 mb-6 w-full overflow-hidden">
-                    <h3 className="text-xl md:text-2xl font-black text-orange-800 text-center mb-4">
+                <div className="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900 dark:to-red-900 p-4 md:p-6 rounded-2xl border-4 border-orange-300 dark:border-orange-600 mb-6 w-full overflow-hidden transition-colors">
+                    <h3 className="text-xl md:text-2xl font-black text-orange-800 dark:text-orange-200 text-center mb-4">
                         ⏰ How Fast is the Drift?
                     </h3>
 
                     {/* Week blocks */}
                     {weeks > 0 && (
                         <div className="mb-4">
-                            <p className="text-center font-bold text-gray-700 mb-3 text-sm md:text-base">
+                            <p className="text-center font-bold text-gray-700 dark:text-gray-300 mb-3 text-sm md:text-base">
                                 {weeks > maxWeeksToShow ? `${weeks} Weeks` : 'Weeks Drifted:'}
                             </p>
                             <div className="flex flex-wrap gap-2 justify-center mb-2">
@@ -432,24 +531,24 @@
 
                     {/* Detailed breakdown */}
                     <div className="grid grid-cols-3 gap-3 mb-3">
-                        <div className="bg-white rounded-xl p-4 text-center border-2 border-orange-300">
-                            <div className="text-4xl font-black text-orange-600">{weeks}</div>
-                            <div className="text-sm font-bold text-gray-600">Week{weeks !== 1 ? 's' : ''}</div>
+                        <div className="bg-white dark:bg-gray-700 rounded-xl p-4 text-center border-2 border-orange-300 dark:border-orange-600 transition-colors">
+                            <div className="text-4xl font-black text-orange-600 dark:text-orange-400">{weeks}</div>
+                            <div className="text-sm font-bold text-gray-600 dark:text-gray-400">Week{weeks !== 1 ? 's' : ''}</div>
                         </div>
-                        <div className="bg-white rounded-xl p-4 text-center border-2 border-yellow-300">
-                            <div className="text-4xl font-black text-yellow-600">{days}</div>
-                            <div className="text-sm font-bold text-gray-600">Day{days !== 1 ? 's' : ''}</div>
+                        <div className="bg-white dark:bg-gray-700 rounded-xl p-4 text-center border-2 border-yellow-300 dark:border-yellow-600 transition-colors">
+                            <div className="text-4xl font-black text-yellow-600 dark:text-yellow-400">{days}</div>
+                            <div className="text-sm font-bold text-gray-600 dark:text-gray-400">Day{days !== 1 ? 's' : ''}</div>
                         </div>
-                        <div className="bg-white rounded-xl p-4 text-center border-2 border-blue-300">
-                            <div className="text-4xl font-black text-blue-600">{hours}</div>
-                            <div className="text-sm font-bold text-gray-600">Hour{hours !== 1 ? 's' : ''}</div>
+                        <div className="bg-white dark:bg-gray-700 rounded-xl p-4 text-center border-2 border-blue-300 dark:border-blue-600 transition-colors">
+                            <div className="text-4xl font-black text-blue-600 dark:text-blue-400">{hours}</div>
+                            <div className="text-sm font-bold text-gray-600 dark:text-gray-400">Hour{hours !== 1 ? 's' : ''}</div>
                         </div>
                     </div>
 
                     {/* Progress bar for current week */}
                     {drift >= 1 && (
-                        <div className="bg-white rounded-xl p-4 border-2 border-purple-300">
-                            <p className="text-sm font-bold text-gray-700 mb-2 text-center">
+                        <div className="bg-white dark:bg-gray-700 rounded-xl p-4 border-2 border-purple-300 dark:border-purple-600 transition-colors">
+                            <p className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 text-center">
                                 Progress Through Week {weeks + 1}:
                             </p>
                             <div className="relative h-8 bg-gray-200 rounded-full overflow-hidden">
@@ -515,12 +614,12 @@
             const driftPercentage = (drift / 91.3) * 100; // percentage through one season
 
             return (
-                <div className="bg-white rounded-2xl p-4 md:p-6 shadow-xl w-full overflow-hidden">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 md:p-6 shadow-xl w-full overflow-hidden transition-colors duration-300">
                     <div className="text-center mb-6">
-                        <h3 className="text-xl md:text-3xl font-black text-gray-800 mb-2">
+                        <h3 className="text-xl md:text-3xl font-black text-gray-800 dark:text-gray-200 mb-2">
                             🌍 Season Calendar vs Reality
                         </h3>
-                        <p className="text-sm md:text-lg text-gray-600">
+                        <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400">
                             {drift < 1 ? (
                                 "Everything matches... for now!"
                             ) : drift < 7 ? (
@@ -537,10 +636,10 @@
 
                     {/* Drift indicator bar */}
                     {drift >= 1 && (
-                        <div className="mb-6 bg-gradient-to-r from-yellow-100 to-red-100 p-4 rounded-xl border-2 border-orange-400">
+                        <div className="mb-6 bg-gradient-to-r from-yellow-100 to-red-100 dark:from-yellow-900 dark:to-red-900 p-4 rounded-xl border-2 border-orange-400 dark:border-orange-600 transition-colors">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-bold text-gray-700">Drift Progress:</span>
-                                <span className="text-sm font-bold text-orange-700">{driftDays} day{driftDays !== 1 ? 's' : ''} off</span>
+                                <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Drift Progress:</span>
+                                <span className="text-sm font-bold text-orange-700 dark:text-orange-400">{driftDays} day{driftDays !== 1 ? 's' : ''} off</span>
                             </div>
                             <div className="relative h-6 bg-white rounded-full overflow-hidden border-2 border-orange-300">
                                 <div
@@ -632,12 +731,12 @@
 
                     {/* Explanation */}
                     {drift >= 91.3 && (
-                        <div className="mt-6 bg-red-100 border-4 border-red-500 rounded-xl p-4 md:p-6">
+                        <div className="mt-6 bg-red-100 dark:bg-red-900 border-4 border-red-500 dark:border-red-600 rounded-xl p-4 md:p-6 transition-colors">
                             <div className="text-center">
-                                <p className="text-xl md:text-2xl font-black text-red-800 mb-3">
+                                <p className="text-xl md:text-2xl font-black text-red-800 dark:text-red-200 mb-3">
                                     🚨 SEASONS ARE WRONG! 🚨
                                 </p>
-                                <p className="text-base md:text-lg text-gray-800">
+                                <p className="text-base md:text-lg text-gray-800 dark:text-gray-200">
                                     When your calendar says it's <strong>{seasons[0].name}</strong>,
                                     it's ACTUALLY <strong>{getActualSeason(0).name}</strong> outside!
                                 </p>
@@ -671,7 +770,7 @@
             ];
 
             return (
-                <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-blue-100 p-4 md:p-8 overflow-x-hidden">
+                <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-blue-100 dark:from-gray-900 dark:via-purple-900 dark:to-gray-900 p-4 md:p-8 overflow-x-hidden transition-colors duration-300">
                     <div className="max-w-4xl mx-auto w-full">
                         {/* Progress Dots */}
                         <div className="flex justify-center gap-3 mb-8">
@@ -685,6 +784,8 @@
                                             : 'w-10 h-10 rounded-full shadow-lg opacity-60 hover:opacity-100'
                                     } bg-gradient-to-br ${s.color} flex items-center justify-center text-2xl bounce`}
                                     style={{ animationDelay: `${idx * 0.1}s` }}
+                                    aria-label={s.title}
+                                    aria-current={idx === screen ? 'step' : undefined}
                                 >
                                     {s.icon}
                                 </button>
@@ -694,7 +795,7 @@
                         {/* Screen 0: Welcome & Age Input */}
                         {screen === 0 && (
                             <div className="fade-in">
-                                <div className="bg-white rounded-3xl shadow-2xl p-6 md:p-12 text-center">
+                                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-6 md:p-12 text-center transition-colors duration-300">
                                     <div className="text-6xl md:text-8xl mb-6 float">🌍</div>
                                     <h1 className="text-3xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-4">
                                         Why Do We Need
@@ -703,7 +804,7 @@
 
                                     {!kidAge ? (
                                         <div className="mt-8">
-                                            <p className="text-xl md:text-2xl font-bold text-gray-800 mb-6">How old are you?</p>
+                                            <p className="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">How old are you?</p>
                                             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
                                                 <input
                                                     type="number"
@@ -712,9 +813,9 @@
                                                     value={tempAge}
                                                     onChange={(e) => setTempAge(e.target.value)}
                                                     placeholder="8"
-                                                    className="w-32 px-6 py-4 text-3xl md:text-4xl font-bold text-center rounded-2xl border-4 border-purple-400 focus:outline-none focus:border-pink-500 focus:ring-4 focus:ring-pink-200"
+                                                    className="w-32 px-6 py-4 text-3xl md:text-4xl font-bold text-center rounded-2xl border-4 border-purple-400 dark:border-purple-500 focus:outline-none focus:border-pink-500 focus:ring-4 focus:ring-pink-200 dark:focus:ring-pink-900 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors"
                                                 />
-                                                <span className="text-xl md:text-2xl font-bold text-gray-600">years old</span>
+                                                <span className="text-xl md:text-2xl font-bold text-gray-600 dark:text-gray-400">years old</span>
                                             </div>
                                             <button
                                                 onClick={() => {
@@ -725,7 +826,7 @@
                                                 className={`px-8 md:px-12 py-4 md:py-5 rounded-full text-xl md:text-2xl font-black transition-all transform ${
                                                     tempAge && parseInt(tempAge) >= 5 && parseInt(tempAge) <= 18
                                                         ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-2xl hover:shadow-pink-400 hover:scale-110'
-                                                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                        : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                                                 }`}
                                             >
                                                 Let's Go! 🚀
@@ -733,20 +834,20 @@
                                         </div>
                                     ) : (
                                         <div className="mt-8 space-y-6 fade-in">
-                                            <div className="bg-gradient-to-r from-green-100 to-teal-100 p-4 md:p-6 rounded-2xl border-4 border-green-400">
-                                                <p className="text-2xl md:text-3xl font-black text-green-800">
+                                            <div className="bg-gradient-to-r from-green-100 to-teal-100 dark:from-green-900 dark:to-teal-900 p-4 md:p-6 rounded-2xl border-4 border-green-400 dark:border-green-600 transition-colors">
+                                                <p className="text-2xl md:text-3xl font-black text-green-800 dark:text-green-200">
                                                     Awesome! You're {kidAge}! 🎉
                                                 </p>
                                             </div>
 
-                                            <div className="bg-gradient-to-r from-yellow-100 to-orange-100 p-6 md:p-8 rounded-2xl">
-                                                <p className="text-xl md:text-2xl font-bold mb-4">Earth takes...</p>
-                                                <div className="text-4xl md:text-6xl font-black text-orange-600 mb-2 bounce">
+                                            <div className="bg-gradient-to-r from-yellow-100 to-orange-100 dark:from-yellow-900 dark:to-orange-900 p-6 md:p-8 rounded-2xl transition-colors">
+                                                <p className="text-xl md:text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Earth takes...</p>
+                                                <div className="text-4xl md:text-6xl font-black text-orange-600 dark:text-orange-400 mb-2 bounce">
                                                     365.2422 days
                                                 </div>
-                                                <p className="text-base md:text-lg text-gray-700">to go around the Sun!</p>
-                                                <p className="text-sm md:text-base text-gray-600 mt-3">
-                                                    That's 365 days + <strong className="text-orange-600">6 hours</strong> extra!
+                                                <p className="text-base md:text-lg text-gray-700 dark:text-gray-300">to go around the Sun!</p>
+                                                <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-3">
+                                                    That's 365 days + <strong className="text-orange-600 dark:text-orange-400">6 hours</strong> extra!
                                                 </p>
                                             </div>
 
@@ -765,24 +866,24 @@
                         {/* Screen 1: The Problem */}
                         {screen === 1 && (
                             <div className="fade-in space-y-6">
-                                <div className="bg-white rounded-3xl shadow-2xl p-4 md:p-8">
-                                    <h2 className="text-2xl md:text-4xl font-black text-red-600 mb-6 text-center">
+                                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-4 md:p-8 transition-colors duration-300">
+                                    <h2 className="text-2xl md:text-4xl font-black text-red-600 dark:text-red-400 mb-6 text-center">
                                         ❌ What if we NEVER added leap days?
                                     </h2>
 
                                     {/* 3D Earth Orbit */}
                                     <div className="mb-6 w-full overflow-hidden">
-                                        <p className="text-center font-bold text-gray-700 mb-4 text-sm md:text-base">Watch Earth orbit the Sun:</p>
+                                        <p className="text-center font-bold text-gray-700 dark:text-gray-300 mb-4 text-sm md:text-base">Watch Earth orbit the Sun:</p>
                                         <div className="flex justify-center">
                                             <EarthOrbit speed={2} />
                                         </div>
-                                        <p className="text-center text-xs md:text-sm text-gray-600 mt-3">
+                                        <p className="text-center text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-3">
                                             Each orbit = 365 days + 6 hours... those hours add up!
                                         </p>
                                     </div>
 
                                     {/* Year Counter */}
-                                    <div className="bg-gradient-to-r from-red-100 to-orange-100 p-4 md:p-6 rounded-2xl mb-6">
+                                    <div className="bg-gradient-to-r from-red-100 to-orange-100 dark:from-red-900 dark:to-orange-900 p-4 md:p-6 rounded-2xl mb-6 transition-colors">
                                         <div className="text-center mb-4">
                                             <div className="inline-block bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-2xl px-6 md:px-8 py-3 md:py-4 shadow-xl">
                                                 <div className="text-4xl md:text-6xl font-black bounce">{years}</div>
@@ -793,13 +894,13 @@
                                         {/* Show person's age after years have passed */}
                                         {kidAge && (
                                             <div className="text-center mb-4">
-                                                <div className="inline-block bg-white px-6 py-3 rounded-xl shadow-lg border-2 border-purple-400">
-                                                    <p className="text-sm text-gray-600">You would be:</p>
-                                                    <p className="text-3xl md:text-4xl font-black text-purple-600">
+                                                <div className="inline-block bg-white dark:bg-gray-700 px-6 py-3 rounded-xl shadow-lg border-2 border-purple-400 dark:border-purple-500 transition-colors">
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400">You would be:</p>
+                                                    <p className="text-3xl md:text-4xl font-black text-purple-600 dark:text-purple-400">
                                                         {kidAge + years} years old
                                                     </p>
                                                     {kidAge + years > 100 && (
-                                                        <p className="text-xs text-orange-600 font-bold mt-1">🎂 Over a century!</p>
+                                                        <p className="text-xs text-orange-600 dark:text-orange-400 font-bold mt-1">🎂 Over a century!</p>
                                                     )}
                                                 </div>
                                             </div>
@@ -808,7 +909,7 @@
                                         <div className="flex items-center gap-2 md:gap-4 mb-4">
                                             <button
                                                 onClick={() => setYears(Math.max(1, years - 1))}
-                                                className="px-4 md:px-6 py-2 md:py-3 bg-gray-500 text-white rounded-full font-bold text-lg md:text-xl hover:bg-gray-600"
+                                                className="px-4 md:px-6 py-2 md:py-3 bg-gray-500 dark:bg-gray-600 text-white rounded-full font-bold text-lg md:text-xl hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors"
                                             >
                                                 −1
                                             </button>
@@ -822,7 +923,7 @@
                                             />
                                             <button
                                                 onClick={() => setYears(Math.min(1500, years + 1))}
-                                                className="px-4 md:px-6 py-2 md:py-3 bg-gray-500 text-white rounded-full font-bold text-lg md:text-xl hover:bg-gray-600"
+                                                className="px-4 md:px-6 py-2 md:py-3 bg-gray-500 dark:bg-gray-600 text-white rounded-full font-bold text-lg md:text-xl hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors"
                                             >
                                                 +1
                                             </button>
@@ -897,26 +998,26 @@
                                     )}
 
                                     {/* Time Blocks */}
-                                    <div className="bg-purple-50 p-4 md:p-6 rounded-2xl mb-6 border-4 border-purple-300">
-                                        <p className="text-center font-bold text-lg md:text-xl mb-4 text-purple-800">
+                                    <div className="bg-purple-50 dark:bg-purple-900 p-4 md:p-6 rounded-2xl mb-6 border-4 border-purple-300 dark:border-purple-600 transition-colors">
+                                        <p className="text-center font-bold text-lg md:text-xl mb-4 text-purple-800 dark:text-purple-200">
                                             Extra Days Piling Up:
                                         </p>
                                         <div className="text-center mb-4">
                                             <span className={`font-black bounce ${
-                                                totalDrift >= 365 ? 'text-5xl md:text-7xl text-red-600' :
-                                                totalDrift >= 100 ? 'text-4xl md:text-6xl text-orange-600' :
-                                                'text-3xl md:text-5xl text-purple-600'
+                                                totalDrift >= 365 ? 'text-5xl md:text-7xl text-red-600 dark:text-red-400' :
+                                                totalDrift >= 100 ? 'text-4xl md:text-6xl text-orange-600 dark:text-orange-400' :
+                                                'text-3xl md:text-5xl text-purple-600 dark:text-purple-400'
                                             }`}>
                                                 {totalDrift.toFixed(1)}
                                             </span>
-                                            <span className="text-lg md:text-2xl font-bold text-gray-700"> days off!</span>
+                                            <span className="text-lg md:text-2xl font-bold text-gray-700 dark:text-gray-300"> days off!</span>
                                             {totalDrift >= 365 && (
-                                                <div className="mt-2 text-base md:text-xl font-bold text-red-700 animate-pulse">
+                                                <div className="mt-2 text-base md:text-xl font-bold text-red-700 dark:text-red-400 animate-pulse">
                                                     = {Math.floor(totalDrift / 365)} YEAR{Math.floor(totalDrift / 365) !== 1 ? 'S' : ''}! 🌪️
                                                 </div>
                                             )}
                                             {totalDrift >= 7 && totalDrift < 365 && (
-                                                <div className="mt-2 text-base md:text-lg font-bold text-orange-700">
+                                                <div className="mt-2 text-base md:text-lg font-bold text-orange-700 dark:text-orange-400">
                                                     = {Math.floor(totalDrift / 7)} week{Math.floor(totalDrift / 7) !== 1 ? 's' : ''} + {Math.floor(totalDrift % 7)} day{Math.floor(totalDrift % 7) !== 1 ? 's' : ''}
                                                 </div>
                                             )}
@@ -968,16 +1069,16 @@
                                     <SlidingSeasons drift={totalDrift} />
 
                                     {totalDrift >= 7 && (
-                                        <div className={`border-4 rounded-2xl p-6 mt-6 text-center ${
-                                            totalDrift >= 365 ? 'bg-black text-white border-red-900 animate-pulse' :
-                                            totalDrift >= 182.5 ? 'bg-red-200 border-red-700 animate-pulse' :
-                                            totalDrift >= 91.3 ? 'bg-red-100 border-red-500' :
-                                            'bg-red-50 border-red-400'
+                                        <div className={`border-4 rounded-2xl p-6 mt-6 text-center transition-colors ${
+                                            totalDrift >= 365 ? 'bg-black dark:bg-gray-900 text-white border-red-900 dark:border-red-700 animate-pulse' :
+                                            totalDrift >= 182.5 ? 'bg-red-200 dark:bg-red-800 border-red-700 dark:border-red-600 animate-pulse' :
+                                            totalDrift >= 91.3 ? 'bg-red-100 dark:bg-red-900 border-red-500 dark:border-red-600' :
+                                            'bg-red-50 dark:bg-red-900 border-red-400 dark:border-red-600'
                                         }`}>
                                             <p className={`font-black mb-2 ${
-                                                totalDrift >= 365 ? 'text-5xl text-red-500' :
-                                                totalDrift >= 182.5 ? 'text-3xl text-red-800' :
-                                                'text-2xl text-red-800'
+                                                totalDrift >= 365 ? 'text-5xl text-red-500 dark:text-red-400' :
+                                                totalDrift >= 182.5 ? 'text-3xl text-red-800 dark:text-red-200' :
+                                                'text-2xl text-red-800 dark:text-red-200'
                                             }`}>
                                                 {totalDrift >= 365 && '🌪️💥🔥 CALENDAR APOCALYPSE! 🔥💥🌪️'}
                                                 {totalDrift >= 182.5 && totalDrift < 365 && '💥💥 TOTAL CHAOS! 💥💥'}
@@ -1019,11 +1120,11 @@
                                                 )}
                                             </p>
                                             <div className={`rounded-lg p-4 ${
-                                                totalDrift >= 365 ? 'bg-gray-900' :
-                                                totalDrift >= 182.5 ? 'bg-white' :
-                                                'bg-white'
+                                                totalDrift >= 365 ? 'bg-gray-900 dark:bg-black' :
+                                                totalDrift >= 182.5 ? 'bg-white dark:bg-gray-800' :
+                                                'bg-white dark:bg-gray-800'
                                             }`}>
-                                                <p className="font-bold mb-2 text-sm">
+                                                <p className="font-bold mb-2 text-sm text-gray-900 dark:text-gray-100">
                                                     {kidAge && kidAge <= 10 ? 'What this means for YOU:' : 'This means:'}
                                                 </p>
                                                 <ul className="text-xs text-left space-y-1">
@@ -1045,53 +1146,53 @@
                                                         </>
                                                     ) : totalDrift >= 182.5 && kidAge && kidAge <= 10 ? (
                                                         <>
-                                                            <li className="text-red-700">🏊 Summer vacation in COLD weather!</li>
-                                                            <li className="text-blue-700">⛷️ Winter break when it's WARM!</li>
-                                                            <li className="text-orange-700">🎃 Halloween in wrong season!</li>
-                                                            <li className="text-green-700">🌸 Spring break in fall!</li>
+                                                            <li className="text-red-700 dark:text-red-300">🏊 Summer vacation in COLD weather!</li>
+                                                            <li className="text-blue-700 dark:text-blue-300">⛷️ Winter break when it's WARM!</li>
+                                                            <li className="text-orange-700 dark:text-orange-300">🎃 Halloween in wrong season!</li>
+                                                            <li className="text-green-700 dark:text-green-300">🌸 Spring break in fall!</li>
                                                         </>
                                                     ) : totalDrift >= 182.5 ? (
                                                         <>
-                                                            <li className="text-red-700">☀️ Summer activities in winter!</li>
-                                                            <li className="text-blue-700">❄️ Winter sports in summer!</li>
-                                                            <li className="text-orange-700">🍂 Fall harvest in spring!</li>
-                                                            <li className="text-green-700">🌸 Spring flowers in fall!</li>
+                                                            <li className="text-red-700 dark:text-red-300">☀️ Summer activities in winter!</li>
+                                                            <li className="text-blue-700 dark:text-blue-300">❄️ Winter sports in summer!</li>
+                                                            <li className="text-orange-700 dark:text-orange-300">🍂 Fall harvest in spring!</li>
+                                                            <li className="text-green-700 dark:text-green-300">🌸 Spring flowers in fall!</li>
                                                         </>
                                                     ) : totalDrift >= 91.3 && kidAge && kidAge <= 10 ? (
                                                         <>
-                                                            <li>🎄 Christmas could be in HOT summer weather (no snow!)</li>
-                                                            <li>🎃 Halloween might be during spring flowers</li>
-                                                            <li>🎂 Your birthday would be in the WRONG season!</li>
-                                                            <li>🏫 School breaks wouldn't match the weather anymore!</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">🎄 Christmas could be in HOT summer weather (no snow!)</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">🎃 Halloween might be during spring flowers</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">🎂 Your birthday would be in the WRONG season!</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">🏫 School breaks wouldn't match the weather anymore!</li>
                                                         </>
                                                     ) : totalDrift >= 91.3 ? (
                                                         <>
-                                                            <li>❄️ Christmas could be in HOT summer weather</li>
-                                                            <li>🎃 Halloween might be during spring flowers</li>
-                                                            <li>🌸 Spring break could be in freezing winter</li>
-                                                            <li>☀️ Your birthday would be in the WRONG season!</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">❄️ Christmas could be in HOT summer weather</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">🎃 Halloween might be during spring flowers</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">🌸 Spring break could be in freezing winter</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">☀️ Your birthday would be in the WRONG season!</li>
                                                         </>
                                                     ) : totalDrift >= 30.44 && kidAge && kidAge <= 10 ? (
                                                         <>
-                                                            <li>🎂 Your birthday party in the wrong weather!</li>
-                                                            <li>🎃 Trick-or-treating in wrong season!</li>
-                                                            <li>🌡️ Can't trust weather predictions!</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">🎂 Your birthday party in the wrong weather!</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">🎃 Trick-or-treating in wrong season!</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">🌡️ Can't trust weather predictions!</li>
                                                         </>
                                                     ) : totalDrift >= 30.44 ? (
                                                         <>
-                                                            <li>🎂 Birthdays in wrong seasons</li>
-                                                            <li>🎃 Holidays completely misaligned</li>
-                                                            <li>🌡️ Weather predictions useless!</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">🎂 Birthdays in wrong seasons</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">🎃 Holidays completely misaligned</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">🌡️ Weather predictions useless!</li>
                                                         </>
                                                     ) : kidAge && kidAge <= 10 ? (
                                                         <>
-                                                            <li>📅 Your birthday could be a week early!</li>
-                                                            <li>🌸 Seasons feel weird and confusing</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">📅 Your birthday could be a week early!</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">🌸 Seasons feel weird and confusing</li>
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <li>📅 Events would be scheduled wrong</li>
-                                                            <li>🌸 Seasons starting to feel off</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">📅 Events would be scheduled wrong</li>
+                                                            <li className="text-gray-900 dark:text-gray-100">🌸 Seasons starting to feel off</li>
                                                         </>
                                                     )}
                                                 </ul>
@@ -1102,7 +1203,7 @@
                                     <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mt-8">
                                         <button
                                             onClick={() => setScreen(0)}
-                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-300 text-gray-700 rounded-full font-bold text-lg md:text-xl hover:bg-gray-400"
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-full font-bold text-lg md:text-xl hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
                                         >
                                             ← Back
                                         </button>
@@ -1120,18 +1221,18 @@
                         {/* Screen 2: The Solution */}
                         {screen === 2 && (
                             <div className="fade-in">
-                                <div className="bg-white rounded-3xl shadow-2xl p-4 md:p-8">
-                                    <h2 className="text-3xl md:text-4xl font-black text-green-600 mb-6 text-center">
+                                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-4 md:p-8 transition-colors duration-300">
+                                    <h2 className="text-3xl md:text-4xl font-black text-green-600 dark:text-green-400 mb-6 text-center">
                                         ✅ The Solution: Leap Years!
                                     </h2>
 
-                                    <div className="bg-gradient-to-r from-green-100 to-emerald-100 p-4 md:p-8 rounded-2xl mb-6 border-4 border-green-400">
+                                    <div className="bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900 dark:to-emerald-900 p-4 md:p-8 rounded-2xl mb-6 border-4 border-green-400 dark:border-green-600 transition-colors">
                                         <div className="text-center mb-6">
                                             <div className="text-6xl md:text-8xl mb-4 float">📅</div>
-                                            <p className="text-2xl md:text-3xl font-black text-green-800 mb-2">
+                                            <p className="text-2xl md:text-3xl font-black text-green-800 dark:text-green-200 mb-2">
                                                 Every 4 years...
                                             </p>
-                                            <p className="text-3xl md:text-5xl font-black text-green-600 mb-4 bounce">
+                                            <p className="text-3xl md:text-5xl font-black text-green-600 dark:text-green-400 mb-4 bounce">
                                                 Add February 29th!
                                             </p>
                                         </div>
@@ -1157,15 +1258,15 @@
                                     </div>
 
                                     {kidAge && (
-                                        <div className="bg-gradient-to-r from-pink-100 to-purple-100 p-4 md:p-6 rounded-2xl mb-6 border-4 border-pink-300">
-                                            <p className="text-xl md:text-2xl font-black text-purple-800 text-center mb-3">
+                                        <div className="bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900 dark:to-purple-900 p-4 md:p-6 rounded-2xl mb-6 border-4 border-pink-300 dark:border-pink-600 transition-colors">
+                                            <p className="text-xl md:text-2xl font-black text-purple-800 dark:text-purple-200 text-center mb-3">
                                                 🎉 Fun Fact for You!
                                             </p>
-                                            <p className="text-lg md:text-xl text-center text-gray-700">
-                                                You've experienced <strong className="text-purple-600 text-2xl md:text-3xl">{Math.floor(kidAge / 4)}</strong> leap day{Math.floor(kidAge / 4) !== 1 ? 's' : ''} in your life!
+                                            <p className="text-lg md:text-xl text-center text-gray-700 dark:text-gray-300">
+                                                You've experienced <strong className="text-purple-600 dark:text-purple-400 text-2xl md:text-3xl">{Math.floor(kidAge / 4)}</strong> leap day{Math.floor(kidAge / 4) !== 1 ? 's' : ''} in your life!
                                             </p>
                                             {Math.floor(kidAge / 4) === 0 && (
-                                                <p className="text-center text-gray-600 mt-2 text-sm md:text-base">
+                                                <p className="text-center text-gray-600 dark:text-gray-400 mt-2 text-sm md:text-base">
                                                     Your first one is coming soon! 🎊
                                                 </p>
                                             )}
@@ -1184,44 +1285,44 @@
                                     </div>
 
                                     {/* The 100 and 400 Year Rules */}
-                                    <div className="bg-gradient-to-r from-orange-100 to-red-100 p-4 md:p-6 rounded-2xl mb-6 border-4 border-orange-400">
+                                    <div className="bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900 dark:to-red-900 p-4 md:p-6 rounded-2xl mb-6 border-4 border-orange-400 dark:border-orange-600 transition-colors">
                                         <div className="text-center mb-4">
                                             <div className="text-4xl md:text-5xl mb-3">🤓</div>
-                                            <p className="text-xl md:text-2xl font-black text-orange-800 mb-2">
+                                            <p className="text-xl md:text-2xl font-black text-orange-800 dark:text-orange-200 mb-2">
                                                 Wait... There's a Twist!
                                             </p>
                                         </div>
 
                                         <div className="space-y-4">
-                                            <div className="bg-white rounded-xl p-4 border-2 border-orange-300">
-                                                <p className="text-base md:text-lg font-bold text-gray-800 mb-2">
+                                            <div className="bg-white dark:bg-gray-700 rounded-xl p-4 border-2 border-orange-300 dark:border-orange-600 transition-colors">
+                                                <p className="text-base md:text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">
                                                     🟢 Rule 1: Every 4 years = Leap Year
                                                 </p>
-                                                <p className="text-sm md:text-base text-gray-600">
+                                                <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
                                                     2024, 2028, 2032... ✓ (adds Feb 29th)
                                                 </p>
                                             </div>
 
-                                            <div className="bg-white rounded-xl p-4 border-2 border-red-400">
-                                                <p className="text-base md:text-lg font-bold text-gray-800 mb-2">
+                                            <div className="bg-white dark:bg-gray-700 rounded-xl p-4 border-2 border-red-400 dark:border-red-600 transition-colors">
+                                                <p className="text-base md:text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">
                                                     🔴 Rule 2: BUT... NOT if divisible by 100!
                                                 </p>
-                                                <p className="text-sm md:text-base text-gray-600">
+                                                <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
                                                     1900, 2100, 2200 = NOT leap years ✗
                                                 </p>
-                                                <p className="text-xs md:text-sm text-gray-500 mt-2 italic">
+                                                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-500 mt-2 italic">
                                                     Why? Adding a day every 4 years is slightly TOO MUCH! We overcorrect by ~11 minutes/year.
                                                 </p>
                                             </div>
 
-                                            <div className="bg-white rounded-xl p-4 border-2 border-green-500">
-                                                <p className="text-base md:text-lg font-bold text-gray-800 mb-2">
+                                            <div className="bg-white dark:bg-gray-700 rounded-xl p-4 border-2 border-green-500 dark:border-green-600 transition-colors">
+                                                <p className="text-base md:text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">
                                                     🟢 Rule 3: EXCEPT... if divisible by 400!
                                                 </p>
-                                                <p className="text-sm md:text-base text-gray-600">
+                                                <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
                                                     2000, 2400 = ARE leap years ✓
                                                 </p>
-                                                <p className="text-xs md:text-sm text-gray-500 mt-2 italic">
+                                                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-500 mt-2 italic">
                                                     This fine-tunes our calendar to be super accurate!
                                                 </p>
                                             </div>
@@ -1252,8 +1353,8 @@
                                             </div>
                                         </div>
 
-                                        <div className="mt-4 bg-yellow-100 rounded-xl p-4 border-2 border-yellow-500">
-                                            <p className="text-sm md:text-base font-bold text-yellow-900 text-center">
+                                        <div className="mt-4 bg-yellow-100 dark:bg-yellow-900 rounded-xl p-4 border-2 border-yellow-500 dark:border-yellow-600 transition-colors">
+                                            <p className="text-sm md:text-base font-bold text-yellow-900 dark:text-yellow-100 text-center">
                                                 💡 With these 3 rules, our calendar is accurate to within 1 day every 3,236 years! 🎯
                                             </p>
                                         </div>
@@ -1262,7 +1363,7 @@
                                     <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                                         <button
                                             onClick={() => setScreen(1)}
-                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-300 text-gray-700 rounded-full font-bold text-lg md:text-xl hover:bg-gray-400"
+                                            className="flex-1 px-6 md:px-8 py-3 md:py-4 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-full font-bold text-lg md:text-xl hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
                                         >
                                             ← Back
                                         </button>
@@ -1277,12 +1378,91 @@
                             </div>
                         )}
                     </div>
+                    <CharacterGuide screen={screen} years={years} drift={totalDrift} kidAge={kidAge} />
                 </div>
             );
         }
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<SimpleLeapYearApp />);
+    </script>
+    </main>
+
+    <!-- Scripts -->
+    <script src="shared-utils.js"></script>
+    <script src="accessibility.js"></script>
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('span');
+
+        function updateThemeIcon() {
+            themeIcon.textContent = themeManager.isDark ? '☀️' : '🌙';
+            themeToggle.setAttribute('aria-label', `Switch to ${themeManager.isDark ? 'light' : 'dark'} mode`);
+        }
+
+        updateThemeIcon();
+
+        themeToggle.addEventListener('click', () => {
+            themeManager.toggle();
+            updateThemeIcon();
+            screenReader.announce(`${themeManager.isDark ? 'Dark' : 'Light'} mode enabled`);
+        });
+
+        // Font size controls
+        const fontDecrease = document.getElementById('font-decrease');
+        const fontIncrease = document.getElementById('font-increase');
+        const fontSizeDisplay = document.getElementById('font-size-display');
+
+        function updateFontDisplay() {
+            fontSizeDisplay.textContent = `${fontSizeController.size}%`;
+        }
+
+        updateFontDisplay();
+
+        fontDecrease.addEventListener('click', () => {
+            fontSizeController.decrease();
+            updateFontDisplay();
+            screenReader.announce(`Font size decreased to ${fontSizeController.size}%`);
+        });
+
+        fontIncrease.addEventListener('click', () => {
+            fontSizeController.increase();
+            updateFontDisplay();
+            screenReader.announce(`Font size increased to ${fontSizeController.size}%`);
+        });
+
+        // Animation toggle
+        const animationToggle = document.getElementById('animation-toggle');
+        const animationStatus = document.getElementById('animation-status');
+
+        function updateAnimationStatus() {
+            animationStatus.textContent = animationController.enabled ? '▶️ Animations On' : '⏸️ Animations Off';
+            animationToggle.setAttribute('aria-label', `Turn animations ${animationController.enabled ? 'off' : 'on'}`);
+        }
+
+        updateAnimationStatus();
+
+        animationToggle.addEventListener('click', () => {
+            animationController.toggle();
+            updateAnimationStatus();
+            screenReader.announce(`Animations ${animationController.enabled ? 'enabled' : 'disabled'}`);
+        });
+
+        // Share button
+        document.getElementById('share-button').addEventListener('click', async () => {
+            const success = await shareContent(
+                'Leap Years Explained',
+                'Check out this interactive explanation of why we need leap years!',
+                window.location.href
+            );
+            if (success) {
+                soundManager.play('success');
+            }
+        });
+
+        // Initialize sound manager
+        soundManager.init();
     </script>
 </body>
 </html>

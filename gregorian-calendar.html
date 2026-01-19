@@ -3,34 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Gregorian Calendar & Easter</title>
+
+    <!-- Primary Meta Tags -->
+    <title>The Gregorian Calendar - Interactive Educational Visualization</title>
+    <meta name="title" content="The Gregorian Calendar - Interactive Educational Visualization">
+    <meta name="description" content="Learn about the Gregorian calendar system, leap year rules, Julian-Gregorian differences, and Easter calculation through interactive animations.">
+    <meta name="keywords" content="gregorian calendar, leap year, julian calendar, easter, pope gregory, calendar system, interactive visualization">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://kesava.github.io/calendars/gregorian-calendar.html">
+    <meta property="og:title" content="The Gregorian Calendar">
+    <meta property="og:description" content="Interactive visualization of the Gregorian calendar system and leap year rules">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#8B5CF6">
+
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="shared-styles.css" as="style">
+    <link rel="preload" href="shared-utils.js" as="script">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="shared-styles.css">
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .float { animation: float 3s ease-in-out infinite; }
-        .bounce { animation: bounce 1s ease-in-out infinite; }
-        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
-
         body {
             overflow-x: hidden;
         }
     </style>
 </head>
 <body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="Breadcrumb" class="fixed top-4 left-4 z-50 no-print">
+        <ol class="flex items-center gap-2 bg-white dark:bg-gray-800 rounded-full px-4 py-2 shadow-lg text-sm">
+            <li><a href="index.html" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">🏠 Home</a></li>
+            <li class="text-gray-400" aria-hidden="true">/</li>
+            <li aria-current="page" class="text-gray-900 dark:text-white font-semibold">Gregorian Calendar</li>
+        </ol>
+    </nav>
+
+    <!-- Theme Toggle -->
+    <button
+        id="theme-toggle"
+        class="fixed top-4 right-4 z-50 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all no-print"
+        aria-label="Toggle dark mode"
+    >
+        <span class="text-2xl" aria-hidden="true">🌙</span>
+    </button>
+
+    <!-- Font Size Controls -->
+    <div class="fixed bottom-4 left-4 z-50 flex gap-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg no-print">
+        <button
+            id="font-decrease"
+            class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center text-sm font-semibold transition-colors"
+            aria-label="Decrease font size"
+        >
+            A-
+        </button>
+        <span id="font-size-display" class="px-2 flex items-center text-sm font-semibold">100%</span>
+        <button
+            id="font-increase"
+            class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center text-sm font-semibold transition-colors"
+            aria-label="Increase font size"
+        >
+            A+
+        </button>
+    </div>
+
+    <!-- Animation Control -->
+    <button
+        id="animation-toggle"
+        class="fixed top-20 right-4 z-50 px-4 py-2 rounded-full bg-white dark:bg-gray-800 shadow-lg text-sm font-semibold no-print"
+        aria-label="Toggle animations"
+    >
+        <span id="animation-status">▶️ Animations On</span>
+    </button>
+
+    <!-- Share Button -->
+    <button
+        id="share-button"
+        class="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-blue-500 text-white shadow-lg hover:shadow-xl transition-all no-print"
+        aria-label="Share this page"
+    >
+        <span class="text-xl" aria-hidden="true">📤</span>
+    </button>
+
     <div id="root"></div>
 
     <script type="text/babel">
@@ -172,10 +235,10 @@
                             <span className="font-semibold text-gray-900">Current difference:</span>
                         </p>
                         <p className="text-base text-gray-700">
-                            When it's March 1st (Gregorian), the Julian calendar shows February {28 - driftDays} (still in February!)
+                            When it's March 1st (Gregorian), the Julian calendar shows February {Math.max(1, 29 - driftDays)} (still in February!)
                         </p>
                         <p className="text-xs text-gray-500 mt-2">
-                            As of 2024: Julian is 13 days behind Gregorian
+                            As of 2024: Julian is 13 days behind Gregorian (March 1 Gregorian = February 16 Julian)
                         </p>
                     </div>
 
@@ -357,21 +420,23 @@
             ];
 
             return (
-                <div className="min-h-screen bg-gray-50 p-4 md:p-8 overflow-x-hidden">
+                <main id="main-content" className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8 overflow-x-hidden transition-colors" role="main">
                     <div className="max-w-4xl mx-auto w-full">
                         {/* Progress Dots */}
-                        <div className="flex justify-center gap-3 mb-8">
+                        <div className="flex justify-center gap-3 mb-8" role="navigation" aria-label="Progress through screens">
                             {screens.map((s, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => setScreen(idx)}
+                                    aria-label={`Go to ${s.title}`}
+                                    aria-current={idx === screen ? 'page' : undefined}
                                     className={`transition-all duration-300 ${
                                         idx === screen
                                             ? 'w-12 h-12 rounded-full shadow-lg scale-110'
                                             : 'w-10 h-10 rounded-full shadow opacity-60 hover:opacity-100'
-                                    } ${idx === screen ? 'bg-gray-800' : 'bg-gray-400'} flex items-center justify-center text-2xl`}
+                                    } ${idx === screen ? 'bg-gray-800 dark:bg-gray-200' : 'bg-gray-400 dark:bg-gray-600'} flex items-center justify-center text-2xl`}
                                 >
-                                    {s.icon}
+                                    <span role="img" aria-label={s.title}>{s.icon}</span>
                                 </button>
                             ))}
                         </div>
@@ -379,12 +444,12 @@
                         {/* Screen 0: Welcome */}
                         {screen === 0 && (
                             <div className="fade-in">
-                                <div className="bg-white rounded-3xl shadow-lg p-6 md:p-12 text-center border border-gray-200">
-                                    <div className="text-6xl md:text-8xl mb-6 float">🌍</div>
-                                    <h1 className="text-3xl md:text-6xl font-semibold text-gray-900 mb-6">
+                                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg p-6 md:p-12 text-center border border-gray-200 dark:border-gray-700 transition-colors">
+                                    <div className="text-6xl md:text-8xl mb-6 float" role="img" aria-label="Earth globe">🌍</div>
+                                    <h1 className="text-3xl md:text-6xl font-semibold text-gray-900 dark:text-white mb-6">
                                         The Gregorian Calendar
                                     </h1>
-                                    <p className="text-lg text-gray-600 mb-8">
+                                    <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
                                         The World's Most Widely Used Calendar
                                     </p>
 
@@ -653,12 +718,95 @@
                             </div>
                         )}
                     </div>
-                </div>
+                </main>
             );
         }
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<GregorianCalendarApp />);
+    </script>
+
+    <!-- Shared Utilities -->
+    <script src="shared-utils.js"></script>
+    <script src="accessibility.js"></script>
+
+    <!-- UI Controls Initialization -->
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('span');
+
+        function updateThemeIcon() {
+            themeIcon.textContent = themeManager.isDark ? '☀️' : '🌙';
+            themeToggle.setAttribute('aria-label', `Switch to ${themeManager.isDark ? 'light' : 'dark'} mode`);
+        }
+
+        updateThemeIcon();
+
+        themeToggle.addEventListener('click', () => {
+            themeManager.toggle();
+            updateThemeIcon();
+            screenReader.announce(`${themeManager.isDark ? 'Dark' : 'Light'} mode enabled`);
+            soundManager.play('click');
+        });
+
+        // Font size controls
+        const fontDecrease = document.getElementById('font-decrease');
+        const fontIncrease = document.getElementById('font-increase');
+        const fontSizeDisplay = document.getElementById('font-size-display');
+
+        function updateFontDisplay() {
+            fontSizeDisplay.textContent = `${fontSizeController.size}%`;
+        }
+
+        updateFontDisplay();
+
+        fontDecrease.addEventListener('click', () => {
+            fontSizeController.decrease();
+            updateFontDisplay();
+            screenReader.announce(`Font size decreased to ${fontSizeController.size}%`);
+            soundManager.play('click');
+        });
+
+        fontIncrease.addEventListener('click', () => {
+            fontSizeController.increase();
+            updateFontDisplay();
+            screenReader.announce(`Font size increased to ${fontSizeController.size}%`);
+            soundManager.play('click');
+        });
+
+        // Animation toggle
+        const animationToggle = document.getElementById('animation-toggle');
+        const animationStatus = document.getElementById('animation-status');
+
+        function updateAnimationStatus() {
+            animationStatus.textContent = animationController.enabled ? '▶️ Animations On' : '⏸️ Animations Off';
+            animationToggle.setAttribute('aria-label', `Turn animations ${animationController.enabled ? 'off' : 'on'}`);
+        }
+
+        updateAnimationStatus();
+
+        animationToggle.addEventListener('click', () => {
+            animationController.toggle();
+            updateAnimationStatus();
+            screenReader.announce(`Animations ${animationController.enabled ? 'enabled' : 'disabled'}`);
+            soundManager.play('click');
+        });
+
+        // Share button
+        document.getElementById('share-button').addEventListener('click', async () => {
+            const success = await shareContent(
+                'The Gregorian Calendar',
+                'Check out this interactive Gregorian calendar explanation!',
+                window.location.href
+            );
+            if (success) {
+                soundManager.play('success');
+            }
+        });
+
+        // Initialize sound manager
+        soundManager.init();
     </script>
 </body>
 </html>

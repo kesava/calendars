@@ -3,24 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendar Systems Explorer</title>
+
+    <!-- Primary Meta Tags -->
+    <title>Calendar Systems Explorer - Interactive Educational Visualizations</title>
+    <meta name="title" content="Calendar Systems Explorer - Interactive Educational Visualizations">
+    <meta name="description" content="Interactive educational visualizations exploring calendar systems around the world. Learn about Gregorian, Hindu, Hebrew, and Islamic calendars through engaging animations.">
+    <meta name="keywords" content="calendar, leap year, gregorian, hindu, hebrew, islamic, astronomy, education, interactive, visualization">
+    <meta name="author" content="Calendar Systems Explorer">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://kesava.github.io/calendars/">
+    <meta property="og:title" content="Calendar Systems Explorer">
+    <meta property="og:description" content="Interactive educational visualizations exploring how different cultures track time">
+    <meta property="og:image" content="https://kesava.github.io/calendars/preview.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://kesava.github.io/calendars/">
+    <meta property="twitter:title" content="Calendar Systems Explorer">
+    <meta property="twitter:description" content="Interactive educational visualizations exploring how different cultures track time">
+    <meta property="twitter:image" content="https://kesava.github.io/calendars/preview.png">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#8B5CF6">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://kesava.github.io/calendars/">
+
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="shared-styles.css" as="style">
+    <link rel="preload" href="shared-utils.js" as="script">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="shared-styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .float { animation: float 3s ease-in-out infinite; }
-        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
-
-        body {
-            overflow-x: hidden;
-        }
-
         .card {
             transition: all 0.3s ease;
         }
@@ -29,169 +47,449 @@
             transform: translateY(-8px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
+
+        .search-highlight {
+            background-color: #fef08a;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .dark .search-highlight {
+            background-color: #854d0e;
+            color: #fef08a;
+        }
+
+        .comparison-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comparison-table th {
+            font-weight: 600;
+            background: var(--bg-tertiary);
+        }
+
+        .comparison-table tr:hover {
+            background: var(--bg-secondary);
+        }
     </style>
 </head>
-<body class="bg-gray-50">
-    <div class="min-h-screen p-4 md:p-8">
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Theme Toggle -->
+    <button
+        id="theme-toggle"
+        class="fixed top-4 right-4 z-50 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all no-print"
+        aria-label="Toggle dark mode"
+    >
+        <span class="text-2xl" aria-hidden="true">🌙</span>
+    </button>
+
+    <!-- Font Size Controls -->
+    <div class="fixed bottom-4 left-4 z-50 flex gap-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg no-print">
+        <button
+            id="font-decrease"
+            class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center text-sm font-semibold transition-colors"
+            aria-label="Decrease font size"
+        >
+            A-
+        </button>
+        <span id="font-size-display" class="px-2 flex items-center text-sm font-semibold">100%</span>
+        <button
+            id="font-increase"
+            class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center text-sm font-semibold transition-colors"
+            aria-label="Increase font size"
+        >
+            A+
+        </button>
+    </div>
+
+    <!-- Animation Control -->
+    <button
+        id="animation-toggle"
+        class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 rounded-full bg-white dark:bg-gray-800 shadow-lg text-sm font-semibold no-print"
+        aria-label="Toggle animations"
+    >
+        <span id="animation-status">▶️ Animations On</span>
+    </button>
+
+    <!-- Share Button -->
+    <button
+        id="share-button"
+        class="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-blue-500 text-white shadow-lg hover:shadow-xl transition-all no-print"
+        aria-label="Share this page"
+    >
+        <span class="text-xl" aria-hidden="true">📤</span>
+    </button>
+
+    <!-- Main Content -->
+    <main id="main-content" class="min-h-screen p-4 md:p-8">
         <div class="max-w-6xl mx-auto">
             <!-- Header -->
-            <div class="text-center mb-12 fade-in">
-                <div class="text-6xl md:text-8xl mb-6 float">🌍</div>
-                <h1 class="text-4xl md:text-6xl font-semibold text-gray-900 mb-4">
+            <header class="text-center mb-12 fade-in">
+                <div class="text-6xl md:text-8xl mb-6 float" role="img" aria-label="Earth globe">🌍</div>
+                <h1 class="text-4xl md:text-6xl font-semibold text-gray-900 dark:text-white mb-4">
                     Calendar Systems Explorer
                 </h1>
-                <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+                <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                     Explore how different cultures and religions track time through interactive visualizations
                 </p>
+            </header>
+
+            <!-- Search & Filter -->
+            <div class="mb-8 fade-in" style="animation-delay: 0.1s">
+                <div class="relative max-w-md mx-auto">
+                    <input
+                        type="search"
+                        id="calendar-search"
+                        placeholder="Search calendars (e.g., lunar, solar, Hebrew)..."
+                        class="w-full px-4 py-3 pl-10 rounded-full border-2 border-gray-300 dark:border-gray-600 focus:border-purple-500 dark:focus:border-purple-400 focus:outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors"
+                        aria-label="Search calendars"
+                    />
+                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
             </div>
 
             <!-- Calendar Cards Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <div id="calendar-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                 <!-- Hindu Calendar -->
-                <a href="hindu-calendar.html" class="card bg-white rounded-2xl p-6 md:p-8 border border-gray-200 block fade-in" style="animation-delay: 0.1s">
-                    <div class="text-5xl mb-4">🕉️</div>
-                    <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 mb-3">
-                        The Hindu Calendar
-                    </h2>
-                    <p class="text-gray-600 mb-4">
-                        A lunisolar calendar using astronomical observation. Learn about Adhik Maas (extra months) and the rare Kshaya Masa (skipped months).
-                    </p>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Lunisolar</span>
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Astronomical</span>
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Sankranti</span>
-                    </div>
-                    <div class="text-gray-900 font-medium flex items-center gap-2">
-                        Explore Interactive Guide
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                        </svg>
-                    </div>
-                </a>
+                <article class="calendar-card card bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 border border-gray-200 dark:border-gray-700 fade-in" style="animation-delay: 0.1s" data-keywords="hindu lunisolar astronomical adhik maas kshaya masa sankranti indian">
+                    <a href="hindu-calendar.html" class="block">
+                        <div class="text-5xl mb-4" role="img" aria-label="Om symbol">🕉️</div>
+                        <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-3">
+                            The Hindu Calendar
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            A lunisolar calendar using astronomical observation. Learn about Adhik Maas (extra months) and the rare Kshaya Masa (skipped months).
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="badge badge-info">Lunisolar</span>
+                            <span class="badge badge-info">Astronomical</span>
+                            <span class="badge badge-info">Sankranti</span>
+                        </div>
+                        <div class="text-gray-900 dark:text-white font-medium flex items-center gap-2">
+                            Explore Interactive Guide
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                            </svg>
+                        </div>
+                    </a>
+                </article>
 
                 <!-- Hebrew Calendar -->
-                <a href="jewish-calendar.html" class="card bg-white rounded-2xl p-6 md:p-8 border border-gray-200 block fade-in" style="animation-delay: 0.2s">
-                    <div class="text-5xl mb-4">🕎</div>
-                    <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 mb-3">
-                        The Hebrew Calendar
-                    </h2>
-                    <p class="text-gray-600 mb-4">
-                        A lunisolar calendar with a fixed 19-year cycle (Metonic cycle). Discover how Adar II keeps the calendar synchronized with seasons.
-                    </p>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Lunisolar</span>
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Fixed Cycle</span>
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">19 Years</span>
-                    </div>
-                    <div class="text-gray-900 font-medium flex items-center gap-2">
-                        Explore Interactive Guide
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                        </svg>
-                    </div>
-                </a>
+                <article class="calendar-card card bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 border border-gray-200 dark:border-gray-700 fade-in" style="animation-delay: 0.2s" data-keywords="hebrew jewish lunisolar metonic cycle adar fixed pattern">
+                    <a href="jewish-calendar.html" class="block">
+                        <div class="text-5xl mb-4" role="img" aria-label="Menorah">🕎</div>
+                        <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-3">
+                            The Hebrew Calendar
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            A lunisolar calendar with a fixed 19-year cycle (Metonic cycle). Discover how Adar II keeps the calendar synchronized with seasons.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="badge badge-info">Lunisolar</span>
+                            <span class="badge badge-info">Fixed Cycle</span>
+                            <span class="badge badge-info">19 Years</span>
+                        </div>
+                        <div class="text-gray-900 dark:text-white font-medium flex items-center gap-2">
+                            Explore Interactive Guide
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                            </svg>
+                        </div>
+                    </a>
+                </article>
 
                 <!-- Islamic Calendar -->
-                <a href="islamic-calendar.html" class="card bg-white rounded-2xl p-6 md:p-8 border border-gray-200 block fade-in" style="animation-delay: 0.3s">
-                    <div class="text-5xl mb-4">☪️</div>
-                    <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 mb-3">
-                        The Islamic Calendar
-                    </h2>
-                    <p class="text-gray-600 mb-4">
-                        A purely lunar calendar that drifts through all seasons. Watch Ramadan cycle through winter, spring, summer, and fall over 33 years.
-                    </p>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Purely Lunar</span>
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Seasonal Drift</span>
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">30-Year Cycle</span>
-                    </div>
-                    <div class="text-gray-900 font-medium flex items-center gap-2">
-                        Explore Interactive Guide
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                        </svg>
-                    </div>
-                </a>
+                <article class="calendar-card card bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 border border-gray-200 dark:border-gray-700 fade-in" style="animation-delay: 0.3s" data-keywords="islamic hijri lunar ramadan drift seasonal muslim">
+                    <a href="islamic-calendar.html" class="block">
+                        <div class="text-5xl mb-4" role="img" aria-label="Star and crescent">☪️</div>
+                        <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-3">
+                            The Islamic Calendar
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            A purely lunar calendar that drifts through all seasons. Watch Ramadan cycle through winter, spring, summer, and fall over 33 years.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="badge badge-info">Purely Lunar</span>
+                            <span class="badge badge-info">Seasonal Drift</span>
+                            <span class="badge badge-info">30-Year Cycle</span>
+                        </div>
+                        <div class="text-gray-900 dark:text-white font-medium flex items-center gap-2">
+                            Explore Interactive Guide
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                            </svg>
+                        </div>
+                    </a>
+                </article>
 
                 <!-- Gregorian Calendar -->
-                <a href="gregorian-calendar.html" class="card bg-white rounded-2xl p-6 md:p-8 border border-gray-200 block fade-in" style="animation-delay: 0.4s">
-                    <div class="text-5xl mb-4">🌍</div>
-                    <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 mb-3">
-                        The Gregorian Calendar
-                    </h2>
-                    <p class="text-gray-600 mb-4">
-                        The world's most widely used solar calendar. Understand leap year rules, the Julian-Gregorian split, and the complex Easter calculation.
-                    </p>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Solar</span>
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Leap Years</span>
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Easter</span>
-                    </div>
-                    <div class="text-gray-900 font-medium flex items-center gap-2">
-                        Explore Interactive Guide
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                        </svg>
-                    </div>
-                </a>
+                <article class="calendar-card card bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 border border-gray-200 dark:border-gray-700 fade-in" style="animation-delay: 0.4s" data-keywords="gregorian solar leap year julian easter western christian">
+                    <a href="gregorian-calendar.html" class="block">
+                        <div class="text-5xl mb-4" role="img" aria-label="Earth globe">🌍</div>
+                        <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-3">
+                            The Gregorian Calendar
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            The world's most widely used solar calendar. Understand leap year rules, the Julian-Gregorian split, and the complex Easter calculation.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="badge badge-info">Solar</span>
+                            <span class="badge badge-info">Leap Years</span>
+                            <span class="badge badge-info">Easter</span>
+                        </div>
+                        <div class="text-gray-900 dark:text-white font-medium flex items-center gap-2">
+                            Explore Interactive Guide
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                            </svg>
+                        </div>
+                    </a>
+                </article>
             </div>
 
-            <!-- Additional Resource -->
-            <div class="bg-white rounded-2xl p-6 md:p-8 border border-gray-200 fade-in" style="animation-delay: 0.5s">
+            <!-- No Results Message -->
+            <div id="no-results" class="hidden text-center py-12">
+                <div class="text-6xl mb-4" role="img" aria-label="Magnifying glass">🔍</div>
+                <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">No calendars found</h3>
+                <p class="text-gray-600 dark:text-gray-300">Try searching for "lunar", "solar", or a specific calendar name</p>
+            </div>
+
+            <!-- Bonus Section -->
+            <aside class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 border border-gray-200 dark:border-gray-700 fade-in" style="animation-delay: 0.5s">
                 <div class="flex items-start gap-4">
-                    <div class="text-4xl">📊</div>
+                    <div class="text-4xl" role="img" aria-label="Chart">📊</div>
                     <div class="flex-1">
-                        <h3 class="text-xl md:text-2xl font-semibold text-gray-900 mb-2">
-                            Bonus: Leap Year Explained
+                        <h3 class="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+                            Bonus: Leap Year Explained (For Kids!)
                         </h3>
-                        <p class="text-gray-600 mb-3">
-                            A simplified interactive visualization showing why we need leap years and how seasons would drift without them.
+                        <p class="text-gray-600 dark:text-gray-300 mb-3">
+                            A simplified interactive visualization showing why we need leap years and how seasons would drift without them. Perfect for children!
                         </p>
-                        <a href="index-simple.html" class="inline-flex items-center gap-2 text-gray-900 font-medium hover:gap-3 transition-all">
+                        <a href="leap-year.html" class="inline-flex items-center gap-2 text-gray-900 dark:text-white font-medium hover:gap-3 transition-all">
                             View Leap Year Demo
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                             </svg>
                         </a>
                     </div>
                 </div>
-            </div>
+            </aside>
 
-            <!-- Comparison Section -->
-            <div class="mt-12 bg-gray-900 text-white rounded-2xl p-6 md:p-8 fade-in" style="animation-delay: 0.6s">
+            <!-- Detailed Comparison Table -->
+            <section class="mt-12 bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 border border-gray-200 dark:border-gray-700 fade-in" style="animation-delay: 0.6s">
+                <h3 class="text-2xl md:text-3xl font-semibold mb-6 text-center text-gray-900 dark:text-white">
+                    📊 Detailed Comparison
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Calendar</th>
+                                <th>Type</th>
+                                <th>Leap System</th>
+                                <th>Accuracy</th>
+                                <th>Year Length</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Gregorian</strong></td>
+                                <td>Solar</td>
+                                <td>Every 4 years (except 100, unless 400)</td>
+                                <td>1 day per 3,236 years</td>
+                                <td>365.2425 days</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Hindu</strong></td>
+                                <td>Lunisolar</td>
+                                <td>Adhik Maas (astronomical observation)</td>
+                                <td>1 day per 70,000 years</td>
+                                <td>~354 days (12-13 months)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Hebrew</strong></td>
+                                <td>Lunisolar</td>
+                                <td>19-year cycle (7 leap years)</td>
+                                <td>1 day per 231 years</td>
+                                <td>~354 days (12-13 months)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Islamic</strong></td>
+                                <td>Purely Lunar</td>
+                                <td>30-year cycle (11 leap days)</td>
+                                <td>Intentional drift</td>
+                                <td>354-355 days</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Quick Comparison Cards -->
+            <section class="mt-12 bg-gray-900 text-white rounded-2xl p-6 md:p-8 fade-in" style="animation-delay: 0.7s">
                 <h3 class="text-2xl md:text-3xl font-semibold mb-6 text-center">
-                    📚 Quick Comparison
+                    🌍 Three Approaches to Time
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-white bg-opacity-10 rounded-xl p-4">
-                        <div class="text-3xl mb-2">🕉️</div>
+                    <div class="bg-white bg-opacity-10 rounded-xl p-4 hover:bg-opacity-20 transition-all">
+                        <div class="text-3xl mb-2" role="img" aria-label="Om symbol">🕉️</div>
                         <p class="font-semibold mb-2">Hindu</p>
                         <p class="text-sm opacity-90">Astronomical rules determine when to add/skip months based on Sun's position</p>
                     </div>
-                    <div class="bg-white bg-opacity-10 rounded-xl p-4">
-                        <div class="text-3xl mb-2">🕎</div>
+                    <div class="bg-white bg-opacity-10 rounded-xl p-4 hover:bg-opacity-20 transition-all">
+                        <div class="text-3xl mb-2" role="img" aria-label="Menorah">🕎</div>
                         <p class="font-semibold mb-2">Hebrew</p>
                         <p class="text-sm opacity-90">Fixed 19-year pattern repeats - predictable centuries in advance</p>
                     </div>
-                    <div class="bg-white bg-opacity-10 rounded-xl p-4">
-                        <div class="text-3xl mb-2">☪️</div>
+                    <div class="bg-white bg-opacity-10 rounded-xl p-4 hover:bg-opacity-20 transition-all">
+                        <div class="text-3xl mb-2" role="img" aria-label="Star and crescent">☪️</div>
                         <p class="font-semibold mb-2">Islamic</p>
                         <p class="text-sm opacity-90">Pure lunar - intentionally drifts through all seasons every 33 years</p>
                     </div>
-                    <div class="bg-white bg-opacity-10 rounded-xl p-4">
-                        <div class="text-3xl mb-2">🌍</div>
+                    <div class="bg-white bg-opacity-10 rounded-xl p-4 hover:bg-opacity-20 transition-all">
+                        <div class="text-3xl mb-2" role="img" aria-label="Earth globe">🌍</div>
                         <p class="font-semibold mb-2">Gregorian</p>
                         <p class="text-sm opacity-90">Solar with complex leap rules - accurate to 1 day per 3,236 years</p>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- Footer -->
-            <div class="mt-12 text-center text-gray-500 text-sm fade-in" style="animation-delay: 0.7s">
-                <p>Interactive educational visualizations exploring calendar systems around the world</p>
-                <p class="mt-2">Each page features animations and explanations to help understand these fascinating systems</p>
-            </div>
+            <footer class="mt-12 text-center text-gray-500 dark:text-gray-400 text-sm fade-in" style="animation-delay: 0.8s">
+                <p class="mb-2">Interactive educational visualizations exploring calendar systems around the world</p>
+                <p class="mb-2">Each page features animations and explanations to help understand these fascinating systems</p>
+                <p class="text-xs mt-4">Last updated: <time datetime="2026-01-18">January 2026</time></p>
+            </footer>
         </div>
-    </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="shared-utils.js"></script>
+    <script src="accessibility.js"></script>
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('span');
+
+        function updateThemeIcon() {
+            themeIcon.textContent = themeManager.isDark ? '☀️' : '🌙';
+            themeToggle.setAttribute('aria-label', `Switch to ${themeManager.isDark ? 'light' : 'dark'} mode`);
+        }
+
+        updateThemeIcon();
+
+        themeToggle.addEventListener('click', () => {
+            themeManager.toggle();
+            updateThemeIcon();
+            screenReader.announce(`${themeManager.isDark ? 'Dark' : 'Light'} mode enabled`);
+        });
+
+        // Font size controls
+        const fontDecrease = document.getElementById('font-decrease');
+        const fontIncrease = document.getElementById('font-increase');
+        const fontSizeDisplay = document.getElementById('font-size-display');
+
+        function updateFontDisplay() {
+            fontSizeDisplay.textContent = `${fontSizeController.size}%`;
+        }
+
+        updateFontDisplay();
+
+        fontDecrease.addEventListener('click', () => {
+            fontSizeController.decrease();
+            updateFontDisplay();
+            screenReader.announce(`Font size decreased to ${fontSizeController.size}%`);
+        });
+
+        fontIncrease.addEventListener('click', () => {
+            fontSizeController.increase();
+            updateFontDisplay();
+            screenReader.announce(`Font size increased to ${fontSizeController.size}%`);
+        });
+
+        // Animation toggle
+        const animationToggle = document.getElementById('animation-toggle');
+        const animationStatus = document.getElementById('animation-status');
+
+        function updateAnimationStatus() {
+            animationStatus.textContent = animationController.enabled ? '▶️ Animations On' : '⏸️ Animations Off';
+            animationToggle.setAttribute('aria-label', `Turn animations ${animationController.enabled ? 'off' : 'on'}`);
+        }
+
+        updateAnimationStatus();
+
+        animationToggle.addEventListener('click', () => {
+            animationController.toggle();
+            updateAnimationStatus();
+            screenReader.announce(`Animations ${animationController.enabled ? 'enabled' : 'disabled'}`);
+        });
+
+        // Share button
+        document.getElementById('share-button').addEventListener('click', async () => {
+            const success = await shareContent(
+                'Calendar Systems Explorer',
+                'Check out these interactive calendar explanations!',
+                window.location.href
+            );
+            if (success) {
+                soundManager.play('success');
+            }
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('calendar-search');
+        const calendarCards = document.querySelectorAll('.calendar-card');
+        const noResults = document.getElementById('no-results');
+        const calendarGrid = document.getElementById('calendar-grid');
+
+        searchInput.addEventListener('input', debounce((e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            calendarCards.forEach(card => {
+                const keywords = card.dataset.keywords.toLowerCase();
+                const title = card.querySelector('h2').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+
+                const matches = searchTerm === '' ||
+                               keywords.includes(searchTerm) ||
+                               title.includes(searchTerm) ||
+                               description.includes(searchTerm);
+
+                if (matches) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0) {
+                calendarGrid.style.display = 'none';
+                noResults.classList.remove('hidden');
+                screenReader.announce('No calendars found matching your search');
+            } else {
+                calendarGrid.style.display = '';
+                noResults.classList.add('hidden');
+                screenReader.announce(`${visibleCount} calendar${visibleCount !== 1 ? 's' : ''} found`);
+            }
+        }, 300));
+
+        // Initialize sound manager
+        soundManager.init();
+    </script>
 </body>
 </html>
