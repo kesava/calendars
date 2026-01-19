@@ -29,6 +29,11 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
     <style>
         body {
             overflow-x: hidden;
@@ -48,51 +53,57 @@
         </ol>
     </nav>
 
-    <!-- Theme Toggle -->
+    <!-- Settings Toggle Button -->
     <button
-        id="theme-toggle"
-        class="fixed top-4 right-4 z-50 p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all no-print"
-        aria-label="Toggle dark mode"
+        id="settings-toggle"
+        class="settings-toggle no-print"
+        aria-label="Open settings"
     >
-        <span class="text-2xl" aria-hidden="true">🌙</span>
+        ⚙️
     </button>
 
-    <!-- Font Size Controls -->
-    <div class="fixed bottom-4 left-4 z-50 flex gap-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg no-print">
-        <button
-            id="font-decrease"
-            class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center text-sm font-semibold transition-colors"
-            aria-label="Decrease font size"
-        >
-            A-
-        </button>
-        <span id="font-size-display" class="px-2 flex items-center text-sm font-semibold">100%</span>
-        <button
-            id="font-increase"
-            class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center text-sm font-semibold transition-colors"
-            aria-label="Increase font size"
-        >
-            A+
-        </button>
+    <!-- Settings Overlay -->
+    <div id="settings-overlay" class="settings-overlay no-print"></div>
+
+    <!-- Settings Panel -->
+    <div id="settings-panel" class="settings-panel no-print">
+        <h2 class="settings-header">⚙️ Settings</h2>
+
+        <!-- Theme Section -->
+        <div class="settings-section">
+            <label class="settings-label">Theme</label>
+            <div class="settings-control">
+                <button id="theme-light" class="settings-button">☀️ Light</button>
+                <button id="theme-dark" class="settings-button">🌙 Dark</button>
+            </div>
+        </div>
+
+        <!-- Font Size Section -->
+        <div class="settings-section">
+            <label class="settings-label">Font Size</label>
+            <div class="settings-control">
+                <button id="font-decrease-btn" class="settings-button">A-</button>
+                <span id="font-size-display-panel" style="font-weight: 600; color: #8B5CF6;">100%</span>
+                <button id="font-increase-btn" class="settings-button">A+</button>
+            </div>
+            <div class="settings-info">Adjust text size (80% - 150%)</div>
+        </div>
+
+        <!-- Animations Section -->
+        <div class="settings-section">
+            <label class="settings-label">Animations</label>
+            <div class="settings-control">
+                <button id="animations-on" class="settings-button">▶️ On</button>
+                <button id="animations-off" class="settings-button">⏸️ Off</button>
+            </div>
+        </div>
+
+        <!-- Share Section -->
+        <div class="settings-section">
+            <label class="settings-label">Share</label>
+            <button id="share-button-panel" class="settings-button" style="width: 100%;">📤 Share This Page</button>
+        </div>
     </div>
-
-    <!-- Animation Control -->
-    <button
-        id="animation-toggle"
-        class="fixed top-20 right-4 z-50 px-4 py-2 rounded-full bg-white dark:bg-gray-800 shadow-lg text-sm font-semibold no-print"
-        aria-label="Toggle animations"
-    >
-        <span id="animation-status">▶️ Animations On</span>
-    </button>
-
-    <!-- Share Button -->
-    <button
-        id="share-button"
-        class="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-blue-500 text-white shadow-lg hover:shadow-xl transition-all no-print"
-        aria-label="Share this page"
-    >
-        <span class="text-xl" aria-hidden="true">📤</span>
-    </button>
 
     <div id="root"></div>
 
@@ -732,69 +743,119 @@
 
     <!-- UI Controls Initialization -->
     <script>
-        // Theme toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeIcon = themeToggle.querySelector('span');
+        // Settings Panel Controls
+        const settingsToggle = document.getElementById('settings-toggle');
+        const settingsPanel = document.getElementById('settings-panel');
+        const settingsOverlay = document.getElementById('settings-overlay');
 
-        function updateThemeIcon() {
-            themeIcon.textContent = themeManager.isDark ? '☀️' : '🌙';
-            themeToggle.setAttribute('aria-label', `Switch to ${themeManager.isDark ? 'light' : 'dark'} mode`);
-        }
-
-        updateThemeIcon();
-
-        themeToggle.addEventListener('click', () => {
-            themeManager.toggle();
-            updateThemeIcon();
-            screenReader.announce(`${themeManager.isDark ? 'Dark' : 'Light'} mode enabled`);
+        // Toggle panel
+        settingsToggle.addEventListener('click', () => {
+            settingsPanel.classList.toggle('open');
+            settingsOverlay.classList.toggle('open');
             soundManager.play('click');
         });
 
+        // Close panel when clicking overlay
+        settingsOverlay.addEventListener('click', () => {
+            settingsPanel.classList.remove('open');
+            settingsOverlay.classList.remove('open');
+        });
+
+        // Theme controls
+        const themeLightBtn = document.getElementById('theme-light');
+        const themeDarkBtn = document.getElementById('theme-dark');
+
+        function updateThemeButtons() {
+            if (themeManager.isDark) {
+                themeLightBtn.classList.remove('active');
+                themeDarkBtn.classList.add('active');
+            } else {
+                themeLightBtn.classList.add('active');
+                themeDarkBtn.classList.remove('active');
+            }
+        }
+
+        updateThemeButtons();
+
+        themeLightBtn.addEventListener('click', () => {
+            if (themeManager.isDark) {
+                themeManager.toggle();
+                updateThemeButtons();
+                screenReader.announce('Light mode enabled');
+                soundManager.play('click');
+            }
+        });
+
+        themeDarkBtn.addEventListener('click', () => {
+            if (!themeManager.isDark) {
+                themeManager.toggle();
+                updateThemeButtons();
+                screenReader.announce('Dark mode enabled');
+                soundManager.play('click');
+            }
+        });
+
         // Font size controls
-        const fontDecrease = document.getElementById('font-decrease');
-        const fontIncrease = document.getElementById('font-increase');
-        const fontSizeDisplay = document.getElementById('font-size-display');
+        const fontDecreaseBtn = document.getElementById('font-decrease-btn');
+        const fontIncreaseBtn = document.getElementById('font-increase-btn');
+        const fontSizeDisplayPanel = document.getElementById('font-size-display-panel');
 
         function updateFontDisplay() {
-            fontSizeDisplay.textContent = `${fontSizeController.size}%`;
+            fontSizeDisplayPanel.textContent = `${fontSizeController.size}%`;
         }
 
         updateFontDisplay();
 
-        fontDecrease.addEventListener('click', () => {
+        fontDecreaseBtn.addEventListener('click', () => {
             fontSizeController.decrease();
             updateFontDisplay();
             screenReader.announce(`Font size decreased to ${fontSizeController.size}%`);
             soundManager.play('click');
         });
 
-        fontIncrease.addEventListener('click', () => {
+        fontIncreaseBtn.addEventListener('click', () => {
             fontSizeController.increase();
             updateFontDisplay();
             screenReader.announce(`Font size increased to ${fontSizeController.size}%`);
             soundManager.play('click');
         });
 
-        // Animation toggle
-        const animationToggle = document.getElementById('animation-toggle');
-        const animationStatus = document.getElementById('animation-status');
+        // Animation controls
+        const animationsOnBtn = document.getElementById('animations-on');
+        const animationsOffBtn = document.getElementById('animations-off');
 
-        function updateAnimationStatus() {
-            animationStatus.textContent = animationController.enabled ? '▶️ Animations On' : '⏸️ Animations Off';
-            animationToggle.setAttribute('aria-label', `Turn animations ${animationController.enabled ? 'off' : 'on'}`);
+        function updateAnimationButtons() {
+            if (animationController.enabled) {
+                animationsOnBtn.classList.add('active');
+                animationsOffBtn.classList.remove('active');
+            } else {
+                animationsOnBtn.classList.remove('active');
+                animationsOffBtn.classList.add('active');
+            }
         }
 
-        updateAnimationStatus();
+        updateAnimationButtons();
 
-        animationToggle.addEventListener('click', () => {
-            animationController.toggle();
-            updateAnimationStatus();
-            screenReader.announce(`Animations ${animationController.enabled ? 'enabled' : 'disabled'}`);
-            soundManager.play('click');
+        animationsOnBtn.addEventListener('click', () => {
+            if (!animationController.enabled) {
+                animationController.toggle();
+                updateAnimationButtons();
+                screenReader.announce('Animations enabled');
+                soundManager.play('click');
+            }
+        });
+
+        animationsOffBtn.addEventListener('click', () => {
+            if (animationController.enabled) {
+                animationController.toggle();
+                updateAnimationButtons();
+                screenReader.announce('Animations disabled');
+                soundManager.play('click');
+            }
         });
 
         // Share button
-        document.getElementById('share-button').addEventListener('click', async () => {
+        document.getElementById('share-button-panel').addEventListener('click', async () => {
             const success = await shareContent(
                 'The Gregorian Calendar',
                 'Check out this interactive Gregorian calendar explanation!',
