@@ -185,7 +185,10 @@
 
     <!-- Settings Panel -->
     <div id="settings-panel" class="settings-panel no-print">
-        <h2 class="settings-header">⚙️ Settings</h2>
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="settings-header" style="margin-bottom: 0;">⚙️ Settings</h2>
+            <button id="settings-close" class="text-3xl leading-none text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" aria-label="Close settings">×</button>
+        </div>
 
         <!-- Theme Section -->
         <div class="settings-section">
@@ -1429,6 +1432,13 @@
 
         // Close panel when clicking overlay
         settingsOverlay.addEventListener('click', () => {
+            settingsPanel.classList.remove('open');
+            settingsOverlay.classList.remove('open');
+        });
+
+        // Close panel when clicking close button
+        const settingsClose = document.getElementById('settings-close');
+        settingsClose.addEventListener('click', () => {
             settingsPanel.classList.remove('open');
             settingsOverlay.classList.remove('open');
         });
