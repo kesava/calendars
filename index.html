@@ -403,6 +403,7 @@
         settingsToggle.addEventListener('click', () => {
             settingsPanel.classList.toggle('open');
             settingsOverlay.classList.toggle('open');
+            settingsToggle.style.display = 'none';
             soundManager.play('click');
         });
 
@@ -410,6 +411,7 @@
         settingsOverlay.addEventListener('click', () => {
             settingsPanel.classList.remove('open');
             settingsOverlay.classList.remove('open');
+            settingsToggle.style.display = '';
         });
 
         // Close panel when clicking close button
@@ -417,6 +419,7 @@
         settingsClose.addEventListener('click', () => {
             settingsPanel.classList.remove('open');
             settingsOverlay.classList.remove('open');
+            settingsToggle.style.display = '';
         });
 
         // Theme controls

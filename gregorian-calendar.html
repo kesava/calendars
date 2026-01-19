@@ -762,11 +762,13 @@
         const settingsToggle = document.getElementById('settings-toggle');
         const settingsPanel = document.getElementById('settings-panel');
         const settingsOverlay = document.getElementById('settings-overlay');
+        const topNav = document.querySelector('.fixed.top-4');
 
         // Toggle panel
         settingsToggle.addEventListener('click', () => {
             settingsPanel.classList.toggle('open');
             settingsOverlay.classList.toggle('open');
+            if (topNav) topNav.style.display = 'none';
             soundManager.play('click');
         });
 
@@ -774,6 +776,7 @@
         settingsOverlay.addEventListener('click', () => {
             settingsPanel.classList.remove('open');
             settingsOverlay.classList.remove('open');
+            if (topNav) topNav.style.display = '';
         });
 
         // Close panel when clicking close button
@@ -781,6 +784,7 @@
         settingsClose.addEventListener('click', () => {
             settingsPanel.classList.remove('open');
             settingsOverlay.classList.remove('open');
+            if (topNav) topNav.style.display = '';
         });
 
         // Theme controls
